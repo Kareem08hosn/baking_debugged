@@ -11,6 +11,7 @@ const recipes = [
     bakeTime: 60, // minutes, stored as a number so we can sort by it later
     ingredients: ["bananas", "flour", "sugar", "butter", "eggs", "baking soda"],
     rating: 4.5, // out of 5
+    diet: ["vegetarian"],
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ const recipes = [
     bakeTime: 12,
     ingredients: ["flour", "butter", "brown sugar", "eggs", "chocolate chips"],
     rating: 4.8,
+    diet: ["vegetarian"],
   },
   {
     id: 3,
@@ -29,6 +31,7 @@ const recipes = [
     bakeTime: 45,
     ingredients: ["bread flour", "water", "sourdough starter", "salt"],
     rating: 4.2,
+    diet: ["vegetarian", "vegan"], // every diet this recipe fits (vegan food is also vegetarian)
   },
   {
     id: 4,
@@ -38,6 +41,7 @@ const recipes = [
     bakeTime: 50,
     ingredients: ["flour", "sugar", "butter", "eggs", "lemons"],
     rating: 4.0,
+    diet: ["vegetarian"],
   },
 ];
 
@@ -46,9 +50,7 @@ export default function Home() {
     // className is JSX's word for the HTML "class" attribute.
     // These are Tailwind classes: each one applies a single CSS rule.
     <main className="mx-auto w-full max-w-2xl p-6">
-      <h1 className="text-3xl font-bold">Baking Debugged</h1>
-      {/* Curly braces switch from HTML-like JSX back to JavaScript */}
-      <p className="mb-6 text-gray-500">{recipes.length} recipes</p>
+      <h1 className="mb-6 text-3xl font-bold">Baking Debugged</h1>
 
       {/* Hand the data to RecipeList as a "prop" (like a function argument) */}
       <RecipeList recipes={recipes} />

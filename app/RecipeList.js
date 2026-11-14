@@ -25,33 +25,113 @@ function compareRecipes(a, b, sortBy) {
   return 0;
 }
 
+// Builds the option list for a dropdown from the data itself, so a new
+// category shows up automatically. A Set is a list that drops duplicates;
+// [...set] turns it back into a normal array.
+function uniqueValues(values) {
+  return [...new Set(values)].toSorted();
+}
+
 // { recipes } pulls the "recipes" prop out of what page.js passed in.
 export default function RecipeList({ recipes }) {
   // State = a value React remembers between redraws.
   // sortBy is the current value, setSortBy changes it and redraws the list.
   const [sortBy, setSortBy] = useState("name");
 
+  // One piece of state per filter. "all" means "don't filter on this".
+  const [category, setCategory] = useState("all");
+  const [difficulty, setDifficulty] = useState("all");
+  const [diet, setDiet] = useState("all");
+
+  const categories = uniqueValues(recipes.map((recipe) => recipe.category));
+  // flatMap is map + flatten: each recipe has an ARRAY of diets,
+  // and we want one flat list of them.
+  const diets = uniqueValues(recipes.flatMap((recipe) => recipe.diet));
+
+  // filter() keeps only the recipes where the function returns true.
+  // A recipe must pass all three checks (&& means AND, || means OR).
+  const filteredRecipes = recipes.filter(
+    (recipe) =>
+      (category === "all" || recipe.category === category) &&
+      (difficulty === "all" || recipe.difficulty === difficulty) &&
+      (diet === "all" || recipe.diet.includes(diet))
+  );
+
   // toSorted() returns a sorted COPY, so the original array stays untouched.
-  const sortedRecipes = recipes.toSorted((a, b) =>
+  const sortedRecipes = filteredRecipes.toSorted((a, b) =>
     compareRecipes(a, b, sortBy)
   );
 
   return (
     <div>
-      <label className="mb-4 block">
-        Sort by{" "}
-        <select
-          className="rounded border p-1"
-          value={sortBy}
-          // Runs whenever the user picks an option; event.target is the <select>
-          onChange={(event) => setSortBy(event.target.value)}
-        >
-          <option value="name">Name</option>
-          <option value="bakeTime">Bake time</option>
-          <option value="difficulty">Difficulty</option>
-          <option value="rating">Rating</option>
-        </select>
-      </label>
+      {/* flex-wrap puts the dropdowns in a row and wraps them on small screens */}
+      <div className="mb-4 flex flex-wrap gap-4">
+        <label>
+          Sort by{" "}
+          <select
+            className="rounded border p-1"
+            value={sortBy}
+            // Runs whenever the user picks an option; event.target is the <select>
+            onChange={(event) => setSortBy(event.target.value)}
+          >
+            <option value="name">Name</option>
+            <option value="bakeTime">Bake time</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="rating">Rating</option>
+          </select>
+        </label>
+
+        <label>
+          Category{" "}
+          <select
+            className="rounded border p-1"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+          >
+            <option value="all">All</option>
+            {/* One <option> per category found in the data */}
+            {categories.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Difficulty{" "}
+          <select
+            className="rounded border p-1"
+            value={difficulty}
+            onChange={(event) => setDifficulty(event.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+            <option value="hard">hard</option>
+          </select>
+        </label>
+
+        <label>
+          Diet{" "}
+          <select
+            className="rounded border p-1"
+            value={diet}
+            onChange={(event) => setDiet(event.target.value)}
+          >
+            <option value="all">All</option>
+            {diets.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <p className="mb-4 text-gray-500">
+        Showing {sortedRecipes.length} of {recipes.length} recipes
+      </p>
 
       <ul className="space-y-4">
         {/* .map() runs once per recipe and turns each one into an <li> */}
