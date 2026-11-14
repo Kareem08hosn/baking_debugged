@@ -5,7 +5,9 @@
 // instead of a page. This one checks the one-time token with Supabase. If it
 // is good, Supabase sets the sign-in cookie and we send the visitor to the
 // homepage, signed in.
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { NEXT_COOKIE, safeNextPath } from "@/lib/safeNext";
 import { createClient } from "@/lib/supabase/server";
 
 // The kinds of email link we accept. "signup" and "magiclink" are the names
@@ -25,7 +27,12 @@ export async function GET(request) {
       token_hash: tokenHash,
     });
     if (!error) {
-      redirect("/");
+      // Back to the page the person was on when they asked to sign in
+      // (saved by app/login/actions.js), checked again to be safe.
+      const cookieStore = await cookies();
+      const next = safeNextPath(cookieStore.get(NEXT_COOKIE)?.value);
+      cookieStore.delete(NEXT_COOKIE);
+      redirect(next);
     }
   }
 

@@ -23,6 +23,9 @@ export default function SiteFooter() {
                 {link.label}
               </Link>
             ))}
+            <Link href="/privacy" className="py-1 underline underline-offset-4">
+              Privacy
+            </Link>
           </nav>
 
           <div className="flex flex-wrap gap-x-4 gap-y-1">

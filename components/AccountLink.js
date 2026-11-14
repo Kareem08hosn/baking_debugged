@@ -2,18 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-// The sign-in part of the header: a "Sign in" link, or the visitor's email
-// and a "Sign out" button.
+// The account part of the header: "Sign in", or "Account" once signed in.
 //
 // This is worked out in the browser, not on the server, on purpose. If the
 // header asked the server who is signed in, every page would have to be
 // rebuilt for every visitor, and the recipe list could no longer be built
 // once and reused.
 export default function AccountLink() {
-  const router = useRouter();
   const pathname = usePathname();
   // undefined = not known yet, null = signed out, text = the signed-in email
   const [email, setEmail] = useState(undefined);
@@ -37,42 +35,28 @@ export default function AccountLink() {
     // [] means "run this once, when the component first appears"
   }, []);
 
-  async function handleSignOut() {
-    await createClient().auth.signOut();
-    // Ask the server for the current page again, now signed out.
-    router.refresh();
-  }
-
   // Show nothing until we know, so "Sign in" doesn't flash up for a moment
   // for someone who is signed in.
   if (email === undefined) {
     return null;
   }
 
-  if (email === null) {
-    return (
-      // Marked like the other nav links when you're on the sign-in page
-      <Link
-        href="/login"
-        aria-current={pathname === "/login" ? "page" : undefined}
-        className={pathname === "/login" ? "highlight" : "hover:underline"}
-      >
-        Sign in
-      </Link>
-    );
-  }
-
+  // Signed out: "Sign in". Signed in: "Account" (sign out is on that page).
+  // "Sign in" carries the current page along, so signing in brings you back
+  const href = email === null ? "/login" : "/account";
+  const linkHref =
+    email === null && pathname !== "/login"
+      ? `/login?next=${encodeURIComponent(pathname)}`
+      : href;
+  const isCurrent = pathname === href;
   return (
-    <span className="flex items-center gap-x-3">
-      {/* The email is hidden on phones to keep the header on one line;
-          "hidden sm:inline" means hidden, then shown from the sm width up.
-          truncate cuts a long address off with "…". */}
-      <span className="hidden max-w-48 truncate text-muted sm:inline">
-        {email}
-      </span>
-      <button type="button" onClick={handleSignOut} className="hover:underline">
-        Sign out
-      </button>
-    </span>
+    // Marked like the other nav links when you're on that page
+    <Link
+      href={linkHref}
+      aria-current={isCurrent ? "page" : undefined}
+      className={isCurrent ? "highlight" : "hover:underline"}
+    >
+      {email === null ? "Sign in" : "Account"}
+    </Link>
   );
 }

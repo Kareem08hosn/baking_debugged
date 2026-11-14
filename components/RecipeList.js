@@ -4,8 +4,9 @@
 
 import { useState } from "react";
 import RecipeCard from "@/components/RecipeCard";
-import { useBookmarks } from "@/lib/bookmarks";
+import { useFavourites } from "@/lib/favourites";
 import { useMyRecipes } from "@/lib/myRecipes";
+import { usePreferences } from "@/lib/preferences";
 import { useSavedRecipes } from "@/lib/savedRecipes";
 
 // "easy" < "medium" < "hard" isn't alphabetical, so give each one a number.
@@ -89,8 +90,8 @@ export default function RecipeList({ recipes: builtInRecipes }) {
   }));
   // [...a, ...b, ...c] makes one new array holding everything from all three.
   const recipes = [...builtInRecipes, ...myRecipes, ...localRecipes];
-  // Ids of the recipes saved with the Save button (lib/bookmarks.js)
-  const bookmarks = useBookmarks() ?? [];
+  // Ids of the recipes saved with the Save button (lib/favourites.js)
+  const favouriteIds = useFavourites().ids;
 
   // State = a value React remembers between redraws.
   // sortBy is the current value, setSortBy changes it and redraws the list.
@@ -99,7 +100,10 @@ export default function RecipeList({ recipes: builtInRecipes }) {
   // One piece of state per filter. "all" means "don't filter on this".
   const [category, setCategory] = useState("all");
   const [difficulty, setDifficulty] = useState("all");
-  const [diet, setDiet] = useState("all");
+  // null = not chosen here yet, so the saved preference is used
+  const [chosenDiet, setDiet] = useState(null);
+  const preferredDiet = usePreferences().diet;
+  const diet = chosenDiet ?? preferredDiet;
   // What is typed in the search box
   const [searchText, setSearchText] = useState("");
   // How many recipes are currently shown
@@ -108,7 +112,12 @@ export default function RecipeList({ recipes: builtInRecipes }) {
   const categories = uniqueValues(recipes.map((recipe) => recipe.category));
   // flatMap is map + flatten: each recipe has an ARRAY of diets,
   // and we want one flat list of them.
-  const diets = uniqueValues(recipes.flatMap((recipe) => recipe.diet));
+  // The diet in use is always an option, even if no recipe has it yet
+  // (a "vegan" preference with no vegan recipes), so the dropdown can show it.
+  const diets = uniqueValues([
+    ...recipes.flatMap((recipe) => recipe.diet),
+    ...(diet === "all" ? [] : [diet]),
+  ]);
 
   // How many recipes each tab holds, shown as a small number on the tab.
   // filter(...).length counts the items that pass the test.
@@ -119,14 +128,14 @@ export default function RecipeList({ recipes: builtInRecipes }) {
     return recipes.filter((recipe) => inTab(recipe, value)).length;
   }
 
-  // Is this recipe in this tab? "saved" is a special tab for bookmarks;
+  // Is this recipe in this tab? "saved" is a special tab for favourites;
   // every other tab is a category.
   function inTab(recipe, value) {
     if (value === "all") {
       return true;
     }
     if (value === "saved") {
-      return bookmarks.includes(recipe.id);
+      return favouriteIds.includes(recipe.id);
     }
     if (value === "mine") {
       return recipe.owner != null || recipe.isLocal === true;
@@ -136,7 +145,7 @@ export default function RecipeList({ recipes: builtInRecipes }) {
 
   // The "saved" tab only appears once something is saved (or while it is
   // the chosen tab, so it doesn't vanish under you after un-saving).
-  const showSavedTab = bookmarks.length > 0 || category === "saved";
+  const showSavedTab = favouriteIds.length > 0 || category === "saved";
   // Same for "mine": the person's own recipes
   const hasOwn = recipes.some((recipe) => inTab(recipe, "mine"));
   const showMineTab = hasOwn || category === "mine";

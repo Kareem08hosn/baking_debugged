@@ -16,7 +16,7 @@ export const revalidate = 60;
 // What the site is built with: shown as a list of lab equipment.
 const EQUIPMENT = [
   { item: "Next.js + React", use: "the pages and the interactive tools" },
-  { item: "Supabase (Postgres)", use: "recipes, sign-in, and soon your saved bakes" },
+  { item: "Supabase (Postgres)", use: "recipes, sign-in, bake logs, with row-level security" },
   { item: "Python", use: "the recipe scaler, mirrored in JavaScript, with tests for both" },
   { item: "pandas + scikit-learn", use: "next: finding what makes a bake work" },
 ];
@@ -25,8 +25,8 @@ const EQUIPMENT = [
 const ROADMAP = [
   { step: "Recipes in grams, with scaling, pans and unit conversion", done: true },
   { step: "Chemistry notes and lab tools", done: true },
-  { step: "Accounts: save recipes, notes, ratings and a “made it” log", done: false },
-  { step: "A bake log: record every bake and what went wrong", done: false },
+  { step: "Accounts: your own recipes, saved recipes, notes and preferences", done: true },
+  { step: "A bake log: record every bake and what went wrong, with CSV import and export", done: true },
   { step: "Data analysis and a simple model of what predicts a good bake", done: false },
   { step: "“Why did my bake fail?”: rules from chemistry, then the model, then plain-language AI explanations", done: false },
 ];

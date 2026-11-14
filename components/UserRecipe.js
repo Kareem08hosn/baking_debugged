@@ -55,7 +55,7 @@ export default function UserRecipe({ id }) {
           <Link href="/recipes" className="btn">
             Browse the recipes
           </Link>
-          <Link href="/login" className="btn-paper">
+          <Link href={`/login?next=/recipes/${id}`} className="btn-paper">
             Sign in
           </Link>
         </div>
@@ -79,7 +79,7 @@ export default function UserRecipe({ id }) {
 
   return (
     <>
-      <RecipeDetail recipe={recipe} />
+      <RecipeDetail recipe={recipe} canSave={isInDatabase} />
 
       <div className="mt-14 flex flex-wrap items-center gap-x-4 gap-y-3 border-t-[1.5px] border-dashed border-foreground pt-5">
         <p className="text-sm text-muted">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddRecipeForm from "@/components/AddRecipeForm";
+import SignInCard from "@/components/SignInCard";
 import { getOwnRecipe } from "@/lib/recipes";
 import { getUser } from "@/lib/supabase/server";
 
@@ -14,14 +15,8 @@ export default async function EditRecipePage({ params }) {
 
   if (!user) {
     return (
-      <main className="page max-w-3xl pt-10">
-        <div className="note note-ruled tape max-w-md -rotate-1 px-5 pb-6 pt-8">
-          <p className="font-mono text-lg font-bold leading-7">Sign in to edit your recipes</p>
-          <p className="leading-7">Your recipes belong to your account.</p>
-          <Link href="/login" className="btn mt-4">
-            Sign in
-          </Link>
-        </div>
+      <main className="page max-w-3xl pt-6">
+        <SignInCard title="Sign in to edit your recipes" text="Your recipes belong to your account." />
       </main>
     );
   }

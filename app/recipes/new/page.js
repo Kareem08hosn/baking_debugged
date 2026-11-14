@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AddRecipeForm from "@/components/AddRecipeForm";
 import MoveLocalRecipes from "@/components/MoveLocalRecipes";
+import SignInCard from "@/components/SignInCard";
 import { getUser } from "@/lib/supabase/server";
 
 export const metadata = { title: "Add a recipe" };
@@ -33,16 +34,10 @@ export default async function NewRecipePage() {
         </>
       ) : (
         // Signed out: recipes belong to an account, so ask to sign in first.
-        <div className="note note-ruled tape mt-10 max-w-md -rotate-1 px-5 pb-6 pt-8">
-          <p className="font-mono text-lg font-bold leading-7">Sign in to add recipes</p>
-          <p className="leading-7">
-            Your recipes are saved to your account, so you can find them on
-            any device. Signing in takes one email, no password.
-          </p>
-          <Link href="/login" className="btn mt-4">
-            Sign in
-          </Link>
-        </div>
+        <SignInCard
+          title="Sign in to add recipes"
+          text="Your recipes are saved to your account, so you can find them on any device. Signing in takes one email, no password."
+        />
       )}
     </main>
   );

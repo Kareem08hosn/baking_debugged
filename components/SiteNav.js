@@ -39,13 +39,13 @@ export default function SiteNav() {
 
   return (
     <>
-      {/* The menu button: phones only (md:hidden hides it from the "md"
+      {/* The menu button: phones and tablets only (lg:hidden hides it from the "lg"
           width up). aria-expanded tells screen readers whether the menu is
           open; aria-controls says which element it opens. */}
       <button
         ref={buttonRef}
         type="button"
-        className="grid size-11 place-content-center rounded-full border-[1.5px] border-foreground md:hidden"
+        className="grid size-11 place-content-center rounded-full border-[1.5px] border-foreground lg:hidden"
         aria-expanded={isOpen}
         aria-controls="site-nav"
         onClick={() => setIsOpen(!isOpen)}
@@ -71,7 +71,7 @@ export default function SiteNav() {
       </button>
 
       {/* On phones this is a paper panel under the header, shown only while
-          open. From "md" up it is always a plain row (the md: classes undo
+          open. From "lg" up it is always a plain row (the lg: classes undo
           the panel styling).
 
           The onClick is on the <nav>, not on each link: a click on anything
@@ -84,7 +84,7 @@ export default function SiteNav() {
         onKeyDown={handleKeyDown}
         className={`${
           isOpen ? "flex" : "hidden"
-        } note basis-full flex-col items-start px-4 pb-3 pt-1.5 font-mono text-[1.05rem] md:flex md:basis-auto md:flex-row md:items-center md:gap-x-5 md:bg-transparent md:p-0 md:text-sm md:shadow-none`}
+        } note basis-full flex-col items-start px-4 pb-3 pt-1.5 font-mono text-[1.05rem] lg:flex lg:basis-auto lg:flex-row lg:items-center lg:gap-x-5 lg:bg-transparent lg:p-0 lg:text-sm lg:shadow-none`}
       >
         {NAV_LINKS.map((link) => {
           const current = isCurrent(pathname, link.href);
@@ -94,7 +94,7 @@ export default function SiteNav() {
               href={link.href}
               // aria-current tells screen readers which link is this page
               aria-current={current ? "page" : undefined}
-              className="py-2.5 md:py-1"
+              className="py-2.5 lg:py-1"
             >
               {/* The highlighter goes on a span so it hugs the word, not
                   the link's whole tap area. */}
@@ -104,7 +104,7 @@ export default function SiteNav() {
             </Link>
           );
         })}
-        <span className="py-2.5 md:py-1">
+        <span className="py-2.5 lg:py-1">
           <AccountLink />
         </span>
       </nav>

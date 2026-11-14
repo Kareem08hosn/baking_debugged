@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, Mynerve } from "next/font/google";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import { SITE_URL } from "@/lib/site";
 import { DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/themeSettings";
 import "./globals.css";
 
@@ -30,6 +31,14 @@ export const metadata = {
   },
   description:
     "Baking recipes measured in grams, with the science behind why bakes work or fail.",
+  // The base for complete links in link previews (see lib/site.js)
+  metadataBase: new URL(SITE_URL),
+  // What link previews show (the image comes from app/opengraph-image.js)
+  openGraph: {
+    siteName: "Baking Debugged",
+    type: "website",
+    locale: "en_CA",
+  },
 };
 
 // A tiny script that runs in the browser before the page is drawn. It reads

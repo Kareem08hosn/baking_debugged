@@ -6,10 +6,12 @@ import { useState } from "react";
 import RatingStamp from "@/components/RatingStamp";
 import HydrationGauge from "@/components/recipe/HydrationGauge";
 import MethodSteps from "@/components/recipe/MethodSteps";
+import RecipeJournal from "@/components/recipe/RecipeJournal";
 import SaveButton from "@/components/recipe/SaveButton";
 import Link from "next/link";
 import { topicsForRecipe } from "@/lib/chemistry/topics";
 import { getPanById, pans } from "@/lib/pans";
+import { usePreferences } from "@/lib/preferences";
 import {
   bakersPercentages,
   hydration,
@@ -32,7 +34,9 @@ function Stat({ label, value }) {
 
 // Shows one full recipe, with controls that rescale the ingredients.
 // It is shared by the built-in recipes and the ones saved in the browser.
-export default function RecipeDetail({ recipe }) {
+// canSave is false for recipes saved only in this browser: they aren't in
+// the database, so they can't be saved, logged as bakes or given notes.
+export default function RecipeDetail({ recipe, canSave = true }) {
   // What is in the servings box. Inputs always hold text, so this is text
   // ("12"), and it starts as the recipe's own servings.
   const [servingsText, setServingsText] = useState(String(recipe.servings));
@@ -45,7 +49,11 @@ export default function RecipeDetail({ recipe }) {
   const [panId, setPanId] = useState(originalPan ? originalPan.id : "");
 
   // Which units the Amount column shows: "grams", "us" or "ml".
-  const [unitSystem, setUnitSystem] = useState("grams");
+  // null means "not chosen on this page", so the person's saved preference
+  // (lib/preferences.js, "grams" when signed out) is used.
+  const [chosenUnits, setUnitSystem] = useState(null);
+  const preferences = usePreferences();
+  const unitSystem = chosenUnits ?? preferences.unitSystem;
 
   // While the box is empty or holds something unusable ("", "0", "-3"), keep
   // showing the original recipe instead of an error.
@@ -148,7 +156,7 @@ export default function RecipeDetail({ recipe }) {
             .{isUntested && " Not test-baked here yet."}
           </p>
         )}
-        <SaveButton recipeId={recipe.id} />
+        {canSave && <SaveButton recipeId={recipe.id} />}
       </div>
 
       {/* ---------- Key numbers ----------
@@ -380,6 +388,8 @@ export default function RecipeDetail({ recipe }) {
           )}
         </section>
       </div>
+
+      {canSave && <RecipeJournal recipe={recipe} />}
     </>
   );
 }

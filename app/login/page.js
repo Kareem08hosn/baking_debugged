@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
+import { safeNextPath } from "@/lib/safeNext";
 import LoginForm from "./LoginForm";
 
 export const metadata = { title: "Sign in" };
@@ -7,7 +8,8 @@ export const metadata = { title: "Sign in" };
 // searchParams is the part of the URL after "?", e.g. /login?error=link.
 // Like params, it arrives as a Promise.
 export default async function LoginPage({ searchParams }) {
-  const { error } = await searchParams;
+  const { error, next: rawNext } = await searchParams;
+  const next = safeNextPath(rawNext);
   const user = await getUser();
 
   return (
@@ -22,7 +24,7 @@ export default async function LoginPage({ searchParams }) {
           signs you in. New here? The same link creates your account.
         </p>
         <p className="hand mt-5 max-w-sm -rotate-1 text-muted">
-          coming soon: your saved recipes, notes and bake log, on any device
+          your saved recipes, notes and bake log, on any device
         </p>
       </div>
 
@@ -31,8 +33,8 @@ export default async function LoginPage({ searchParams }) {
           <div className="note tape px-5 pb-5 pt-8">
             <p className="font-mono text-lg font-bold">You’re signed in</p>
             <p className="mt-1.5 break-words text-muted">as {user.email}</p>
-            <Link href="/recipes" className="btn mt-5">
-              Browse the recipes
+            <Link href={next === "/" ? "/recipes" : next} className="btn mt-5">
+              {next === "/" ? "Browse the recipes" : "Carry on"}
             </Link>
           </div>
         ) : (
@@ -44,7 +46,7 @@ export default async function LoginPage({ searchParams }) {
                 new one below.
               </p>
             )}
-            <LoginForm />
+            <LoginForm next={next} />
           </>
         )}
       </div>

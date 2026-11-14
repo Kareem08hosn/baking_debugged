@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 import { sendMagicLink } from "./actions";
 
-export default function LoginForm() {
+// "next" is the page to return to after signing in (from /login?next=...).
+export default function LoginForm({ next = "/" }) {
   // useActionState connects a form to a server action.
   //   state      what the action returned last (starts as { status: "idle" })
   //   formAction what to put on the <form> so submitting calls the action
@@ -34,6 +35,8 @@ export default function LoginForm() {
     // action={formAction}: the browser sends the form's fields to the server
     // action. No onSubmit or preventDefault is needed.
     <form action={formAction} className="note tape grid gap-5 px-5 pb-6 pt-8">
+      {/* A hidden field sends "next" along with the email */}
+      <input type="hidden" name="next" value={next} />
       <div>
         <label htmlFor="login-email" className="label block">
           Email

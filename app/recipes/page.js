@@ -27,9 +27,14 @@ export default async function RecipesPage() {
             dashed stamp = adapted, not test-baked here yet
           </p>
         </div>
-        <Link href="/recipes/new" className="btn-paper">
-          Add a recipe
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/pantry" className="btn-paper">
+            What can I make?
+          </Link>
+          <Link href="/recipes/new" className="btn-quiet self-center">
+            Add a recipe
+          </Link>
+        </div>
       </div>
 
       {/* Hand the data to RecipeList as a "prop" (like a function argument) */}

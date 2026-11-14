@@ -1,6 +1,7 @@
 import PanConverter from "@/components/tools/PanConverter";
 import RecipeScaler from "@/components/tools/RecipeScaler";
 import UnitConverter from "@/components/tools/UnitConverter";
+import AltitudeAdjuster from "@/components/tools/AltitudeAdjuster";
 
 export const metadata = {
   title: "Lab tools",
@@ -31,6 +32,13 @@ const SECTIONS = [
     text: "Grams to cups and back, for the most common baking ingredients, plus oven temperatures. Weighing is more accurate, but not everyone owns a scale.",
     note: "a cup of flour ≠ a cup of sugar",
     Tool: UnitConverter,
+  },
+  {
+    id: "altitude",
+    title: "High altitude",
+    text: "Up a mountain, lower air pressure makes bakes over-rise, collapse and dry out. This suggests how to change a recipe for your altitude.",
+    note: "less leavener, more liquid, hotter oven",
+    Tool: AltitudeAdjuster,
   },
 ];
 

@@ -3,6 +3,8 @@
 // LoginForm.js calls sendMagicLink when it is submitted.
 "use server";
 
+import { cookies } from "next/headers";
+import { NEXT_COOKIE, safeNextPath } from "@/lib/safeNext";
 import { createClient } from "@/lib/supabase/server";
 
 // previousState is whatever this function returned last time (see
@@ -37,6 +39,19 @@ export async function sendMagicLink(previousState, formData) {
       message: "The link couldn’t be sent. Try again in a moment.",
     };
   }
+
+  // Remember where to go after the emailed link is opened (app/auth/confirm
+  // reads this). A cookie, because the link in the email always points to
+  // the same address and can't carry it. It expires after an hour, like the
+  // link itself.
+  const next = safeNextPath(String(formData.get("next") ?? ""));
+  const cookieStore = await cookies();
+  cookieStore.set(NEXT_COOKIE, next, {
+    httpOnly: true, // JavaScript in the page can't read it
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60,
+  });
 
   return { status: "sent", email };
 }
