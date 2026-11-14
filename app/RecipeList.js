@@ -3,6 +3,8 @@
 "use client";
 
 import { useState } from "react";
+// Link is Next.js's version of <a>: it changes page without a full reload.
+import Link from "next/link";
 
 // "easy" < "medium" < "hard" isn't alphabetical, so give each one a number.
 const difficultyOrder = { easy: 1, medium: 2, hard: 3 };
@@ -138,7 +140,13 @@ export default function RecipeList({ recipes }) {
         {sortedRecipes.map((recipe) => (
           // key lets React tell the list items apart; it must be unique
           <li key={recipe.id} className="rounded-lg border p-4">
-            <h2 className="text-xl font-semibold">{recipe.name}</h2>
+            <h2 className="text-xl font-semibold">
+              {/* Backticks make a template string: ${...} drops a value in,
+                  so recipe 3 links to "/recipes/3" */}
+              <Link href={`/recipes/${recipe.id}`} className="hover:underline">
+                {recipe.name}
+              </Link>
+            </h2>
             <p>
               {recipe.category} · {recipe.difficulty} · {recipe.bakeTime} min
             </p>
