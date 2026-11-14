@@ -32,6 +32,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...except the template, which holds variable NAMES only, never values
+!.env.example
 
 # vercel
 .vercel
@@ -48,3 +50,8 @@ __pycache__/
 *.pyc
 .venv/
 .ipynb_checkpoints/
+
+# Real bake log exports are personal data: never commit them.
+# (python/data/demo_bakes.csv is made up and IS committed.)
+python/data/*
+!python/data/demo_bakes.csv

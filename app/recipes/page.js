@@ -28,6 +28,9 @@ export default async function RecipesPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link href="/find" className="btn-paper">
+            Describe it
+          </Link>
           <Link href="/pantry" className="btn-paper">
             What can I make?
           </Link>

@@ -665,6 +665,53 @@ body {
   }
 }
 
+/* Printing: plain black on white, no decoration, no controls. Anything
+   marked print:hidden (Tailwind) or listed here is left off the paper. */
+@media print {
+  :root,
+  :root[data-theme] {
+    --background: #fff;
+    --surface: #fff;
+    --foreground: #000;
+    --muted: #333;
+    --line: #bbb;
+    --highlight: transparent;
+    --tape: transparent;
+    --grid: transparent;
+    --shadow: transparent;
+  }
+  body {
+    background-image: none;
+  }
+  header,
+  footer,
+  .skip-link,
+  button,
+  select,
+  input,
+  .tape::before,
+  .sheet::before,
+  .sheet::after {
+    display: none !important;
+  }
+  .note,
+  .sheet {
+    box-shadow: none;
+    transform: none !important;
+  }
+  /* Keep a step or table row from splitting across two pages, and a
+     heading on the same page as what follows it */
+  li,
+  tr {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}
+
 /* Some people get dizzy or distracted by movement and switch it off in their
    device settings. This turns every animation and transition off for them. */
 @media (prefers-reduced-motion: reduce) {

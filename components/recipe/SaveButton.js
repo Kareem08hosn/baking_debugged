@@ -14,7 +14,7 @@ export default function SaveButton({ recipeId }) {
 
   if (status === "signed-out") {
     return (
-      <Link href={`/login?next=/recipes/${recipeId}`} className="btn-quiet">
+      <Link href={`/login?next=/recipes/${recipeId}`} className="btn-quiet print:hidden">
         <BookmarkIcon filled={false} />
         Sign in to save
       </Link>

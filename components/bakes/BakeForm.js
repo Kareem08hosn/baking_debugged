@@ -23,9 +23,9 @@ function toFormValues(bake) {
     const value = bake?.[item.key];
     values[item.key] = value === null || value === undefined ? "" : String(value);
   }
-  if (!values.bakedOn) {
-    values.bakedOn = today();
-  }
+  // A new bake's date is left empty here: this runs on the server too,
+  // which works in UTC, where it can already be tomorrow on a Montreal
+  // evening. An empty date becomes the browser's own "today" on saving.
   return values;
 }
 
@@ -81,6 +81,8 @@ export default function BakeForm({ bake = null, recipes, prefill = null }) {
     setStatus("saving");
     const input = {
       ...values,
+      // today() here runs in the browser, so it's the baker's own date
+      bakedOn: values.bakedOn || today(),
       hydrationPct: values.hydrationPct === "" && workedOutHydration !== null ? workedOutHydration : values.hydrationPct,
     };
     const result = isEditing ? await updateBake(bake.id, input) : await createBake(input);
@@ -158,7 +160,10 @@ export default function BakeForm({ bake = null, recipes, prefill = null }) {
           </div>
           {input("title", { required: true, placeholder: "Sourdough, attempt 4" })}
           <div className="grid grid-cols-2 gap-4">
-            {input("bakedOn", { required: true })}
+            <div>
+              {input("bakedOn", { "aria-describedby": "bake-date-hint" })}
+              <p id="bake-date-hint" className="mt-1 text-xs text-muted">Leave empty for today.</p>
+            </div>
             {input("rating", { placeholder: "1–5" })}
           </div>
         </div>

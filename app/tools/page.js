@@ -1,3 +1,4 @@
+import Link from "next/link";
 import PanConverter from "@/components/tools/PanConverter";
 import RecipeScaler from "@/components/tools/RecipeScaler";
 import UnitConverter from "@/components/tools/UnitConverter";
@@ -52,6 +53,13 @@ export default function ToolsPage() {
         The same maths the recipe pages use, for any recipe you bring.
       </p>
 
+      <p className="mt-4 text-sm">
+        Also:{" "}
+        <Link href="/substitutions" className="font-mono underline underline-offset-4">substitutions</Link>,{" "}
+        <Link href="/debugger" className="font-mono underline underline-offset-4">bake debugger</Link>,{" "}
+        <Link href="/pantry" className="font-mono underline underline-offset-4">what can I make?</Link>,{" "}
+        <Link href="/find" className="font-mono underline underline-offset-4">find a recipe by describing it</Link>.
+      </p>
       <nav aria-label="Tools on this page" className="mt-5 flex flex-wrap gap-2">
         {SECTIONS.map((section) => (
           <a key={section.id} href={`#${section.id}`} className="chip">

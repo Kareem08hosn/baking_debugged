@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test \"lib/**/*.test.js\""
+    "test": "node --test \"lib/**/*.test.js\"",
+    "embed": "node --env-file=.env.local scripts/embed-recipes.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

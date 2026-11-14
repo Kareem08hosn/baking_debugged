@@ -5,6 +5,7 @@
 import { useState } from "react";
 import RatingStamp from "@/components/RatingStamp";
 import HydrationGauge from "@/components/recipe/HydrationGauge";
+import BakingMode from "@/components/recipe/BakingMode";
 import MethodSteps from "@/components/recipe/MethodSteps";
 import RecipeJournal from "@/components/recipe/RecipeJournal";
 import SaveButton from "@/components/recipe/SaveButton";
@@ -157,6 +158,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
           </p>
         )}
         {canSave && <SaveButton recipeId={recipe.id} />}
+        <BakingMode />
       </div>
 
       {/* ---------- Key numbers ----------
@@ -184,12 +186,19 @@ export default function RecipeDetail({ recipe, canSave = true }) {
           aria-labelledby="ingredients-heading"
           className="note tape min-w-0 self-start px-4 pb-5 pt-7 md:col-span-2"
         >
-          <h2 id="ingredients-heading" className="font-mono text-2xl font-extrabold tracking-tight">
-            Ingredients
-          </h2>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 id="ingredients-heading" className="font-mono text-2xl font-extrabold tracking-tight">
+              Ingredients
+            </h2>
+            {/* Browser-only recipes aren't on the server, so the swap page
+                couldn't show their ingredients; it still works without. */}
+            <Link href={canSave ? `/substitutions?recipe=${recipe.id}` : "/substitutions"} className="font-mono text-sm underline underline-offset-4 print:hidden">
+              Swap an ingredient
+            </Link>
+          </div>
 
           {/* ---------- The instrument panel: servings, units, pan ---------- */}
-          <div className="graph mt-4 grid gap-4 border-[1.5px] border-foreground p-3.5">
+          <div className="graph mt-4 print:hidden grid gap-4 border-[1.5px] border-foreground p-3.5">
             <div>
               <label htmlFor="servings" className="label block">
                 Servings
@@ -364,7 +373,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
             <h2 id="method-heading" className="section-title">
               <span className="highlight">Method</span>
             </h2>
-            <p className="hand -rotate-2 text-muted">tap a step to tick it off</p>
+            <p className="hand -rotate-2 text-muted print:hidden">tap a step to tick it off</p>
           </div>
           <div className="mt-4">
             <MethodSteps steps={recipe.instructions} />
@@ -372,7 +381,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
 
           {/* Links to the chemistry notes this recipe shows best */}
           {chemistry.length > 0 && (
-            <aside className="graph sheet mt-12 px-5 pb-5 pt-7">
+            <aside className="graph sheet mt-12 px-5 pb-5 pt-7 print:hidden">
               <h2 className="font-mono text-lg font-bold">The chemistry in this one</h2>
               <ul className="mt-2">
                 {chemistry.map((topic) => (
@@ -389,7 +398,11 @@ export default function RecipeDetail({ recipe, canSave = true }) {
         </section>
       </div>
 
-      {canSave && <RecipeJournal recipe={recipe} />}
+      {canSave && (
+        <div className="print:hidden">
+          <RecipeJournal recipe={recipe} />
+        </div>
+      )}
     </>
   );
 }

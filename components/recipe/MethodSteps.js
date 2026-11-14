@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import StepTimer from "@/components/recipe/StepTimer";
+import { minutesInStep } from "@/lib/timers";
 
 // The numbered steps. Each one can be ticked off while baking; the ticks
 // are only remembered while the page is open.
@@ -23,7 +25,7 @@ export default function MethodSteps({ steps }) {
   return (
     <ol>
       {steps.map((step, index) => (
-        <li key={index} className="border-b border-dashed border-line last:border-b-0">
+        <li key={index} className="border-b border-dashed border-line pb-1 last:border-b-0">
           {/* The whole step is the label, so tapping anywhere ticks it.
               The real checkbox is hidden (sr-only) but still works with a
               keyboard and screen reader. "peer" lets the elements after it
@@ -47,6 +49,13 @@ export default function MethodSteps({ steps }) {
               {step}
             </span>
           </label>
+          {/* Steps with a time in them get a timer. It sits outside the
+              label, so pressing it doesn't also tick the step. */}
+          {minutesInStep(step) !== null && (
+            <div className="pb-3 pl-13 print:hidden">
+              <StepTimer minutes={minutesInStep(step)} />
+            </div>
+          )}
         </li>
       ))}
     </ol>

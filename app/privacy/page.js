@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isAiEnabled } from "@/lib/ai/config";
 
 export const metadata = {
   title: "Privacy",
@@ -32,12 +33,8 @@ const SECTIONS = [
       "Your light, dark or system theme choice is saved in your browser (localStorage), not on our servers. Recipes added before accounts existed may also still be in your browser until you move them to your account.",
     ],
   },
-  {
-    heading: "AI features (not live yet)",
-    paragraphs: [
-      "Planned features such as ingredient substitutions will send the text you type to Google’s Gemini service. On Gemini’s free tier, Google may use those inputs to improve its products. This page will be updated, and the features will say so clearly, before any of them go live.",
-    ],
-  },
+  // The AI section is filled in below, depending on whether AI is on.
+  { heading: "AI features", paragraphs: [] },
   {
     heading: "Deleting your data",
     paragraphs: [
@@ -46,6 +43,20 @@ const SECTIONS = [
     ],
   },
 ];
+
+// What the AI section says, now or before launch.
+function aiParagraphs() {
+  if (isAiEnabled()) {
+    return [
+      "Three features use Google’s Gemini AI: “Ask the AI” on the substitutions page, “Explain it in plain words” in the bake debugger, and smart search on the find-a-recipe page. When you use one, the text of your question (and, for substitutions, the recipe’s ingredient list) is sent to Gemini. Nothing else about you is sent: not your email, bakes or notes.",
+      "This site uses Gemini’s free tier, where Google may use what is sent to improve its products. Don’t type anything personal into these features.",
+      "Answers are saved and reused for the same question, so they’re stored without any link to who asked. Each person can make a limited number of AI requests per day; the count is stored with your account.",
+    ];
+  }
+  return [
+    "Planned features (substitution suggestions, plain-language bake explanations and smart search) will send the text you type to Google’s Gemini service. On Gemini’s free tier, Google may use those inputs to improve its products. This page will say so here, and the features will say so next to their buttons, once they’re switched on.",
+  ];
+}
 
 export default function PrivacyPage() {
   return (
@@ -58,7 +69,7 @@ export default function PrivacyPage() {
       {SECTIONS.map((section) => (
         <section key={section.heading} className="mt-10 max-w-[65ch]">
           <h2 className="font-mono text-2xl font-extrabold tracking-tight">{section.heading}</h2>
-          {section.paragraphs.map((paragraph) => (
+          {(section.heading === "AI features" ? aiParagraphs() : section.paragraphs).map((paragraph) => (
             <p key={paragraph} className="mt-3 text-[1.0625rem] leading-relaxed">
               {paragraph}
             </p>

@@ -1,4 +1,5 @@
 import BakeDebugger from "@/components/debugger/BakeDebugger";
+import { isAiEnabled } from "@/lib/ai/config";
 import { getMyBake } from "@/lib/journal";
 import { getOwnRecipe, getRecipeById } from "@/lib/recipes";
 
@@ -57,7 +58,7 @@ export default async function DebuggerPage({ searchParams }) {
         </p>
       )}
       <div className="mt-10">
-        <BakeDebugger initialType={initialType} initialDetails={initialDetails} note={note} />
+        <BakeDebugger initialType={initialType} initialDetails={initialDetails} note={note} aiEnabled={isAiEnabled()} />
       </div>
     </main>
   );

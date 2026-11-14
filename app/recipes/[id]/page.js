@@ -2,6 +2,8 @@ import Link from "next/link";
 import RecipeDetail from "@/components/RecipeDetail";
 import UserRecipe from "@/components/UserRecipe";
 import { getRecipeById } from "@/lib/recipes";
+import { jsonLdText, recipeJsonLd } from "@/lib/recipeSchema";
+import { SITE_URL } from "@/lib/site";
 
 // Next.js calls this to fill in the page's <title> (the browser tab text).
 // It gets the same params as the page, so each recipe gets its own title.
@@ -24,7 +26,15 @@ export default async function RecipePage({ params }) {
 
   return (
     <main className="page pt-5">
-      <Link href="/recipes" className="inline-block py-1 font-mono text-sm text-muted hover:underline">
+      {/* Recipe data for search engines (lib/recipeSchema.js). Only for the
+          site's own recipes: private ones aren't shown to search engines. */}
+      {recipe && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdText(recipeJsonLd(recipe, `${SITE_URL}/recipes/${recipe.id}`)) }}
+        />
+      )}
+      <Link href="/recipes" className="inline-block py-1 font-mono text-sm text-muted hover:underline print:hidden">
         ← All recipes
       </Link>
 

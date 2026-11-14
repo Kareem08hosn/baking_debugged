@@ -10,6 +10,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Python environment holds third-party JavaScript (Jupyter's)
+    ".venv/**",
   ]),
 ]);
 

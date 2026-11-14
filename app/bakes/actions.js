@@ -110,7 +110,9 @@ export async function importBakes(inputs) {
   }
   const supabase = await createClient();
   // One insert with every row: the database adds them all or none.
-  const { error } = await supabase.from("bakes").insert(rows);
+  // defaultToNull: false makes sure user_id (not in the rows) gets its
+  // database default, the signed-in person's id, rather than null.
+  const { error } = await supabase.from("bakes").insert(rows, { defaultToNull: false });
   if (error) {
     console.error("Importing bakes failed:", error.message);
     return { error: "The import couldn’t be saved. Nothing was added. Try again in a moment." };

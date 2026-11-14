@@ -18,7 +18,7 @@ function position(value) {
 
 export default function HydrationGauge({ value }) {
   return (
-    <figure className="mt-5">
+    <figure className="mt-5 print:hidden">
       <figcaption className="flex items-baseline justify-between font-mono text-sm">
         <span>hydration</span>
         <b className="text-lg tabular-nums">{value}%</b>

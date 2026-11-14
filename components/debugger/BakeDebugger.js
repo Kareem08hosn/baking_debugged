@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { explainDiagnosis } from "@/app/debugger/actions";
 import { getTopic } from "@/lib/chemistry/topics";
 import { BAKE_TYPES, SYMPTOMS, cleanDetails, detailsFor, diagnose } from "@/lib/debugger";
 
@@ -15,7 +16,8 @@ const CHIP =
 // the likely causes update as you go.
 //   initialType, initialDetails  pre-filled from a logged bake, or empty
 //   note                          that bake's "what went wrong", shown as a reminder
-export default function BakeDebugger({ initialType = "", initialDetails = {}, note = null }) {
+//   aiEnabled                     from the server: can the AI explain it?
+export default function BakeDebugger({ initialType = "", initialDetails = {}, note = null, aiEnabled = false }) {
   const [type, setType] = useState(initialType);
   const [symptoms, setSymptoms] = useState([]);
   const [rawDetails, setRawDetails] = useState(initialDetails);
@@ -34,6 +36,20 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
   }
 
   const results = type ? diagnose(type, symptoms, cleanDetails(rawDetails)) : [];
+
+  // The AI explanation, remembered with the answers it explains: if the
+  // answers change, the old explanation is no longer shown.
+  const answersKey = JSON.stringify([type, [...symptoms].sort(), cleanDetails(rawDetails)]);
+  const [explanation, setExplanation] = useState(null); // { key, result } or { key, error }
+  const [isExplaining, setIsExplaining] = useState(false);
+  const shownExplanation = explanation?.key === answersKey ? explanation : null;
+
+  async function handleExplain() {
+    setIsExplaining(true);
+    const response = await explainDiagnosis({ type, symptoms, details: rawDetails });
+    setExplanation({ key: answersKey, ...response });
+    setIsExplaining(false);
+  }
 
   return (
     // Three blocks: questions 1-2, the report, then question 3. On phones
@@ -93,6 +109,34 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
             : `${results.length} possible ${results.length === 1 ? "cause" : "causes"}, most likely first.`}
         </p>
 
+        {/* Plain-language explanation by the AI (Phase 5 v3) */}
+        {symptoms.length > 0 && aiEnabled && (
+          <div className="mt-5">
+            {!shownExplanation && (
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <button type="button" className="btn-quiet" onClick={handleExplain} disabled={isExplaining}>
+                  {isExplaining ? "Writing it up…" : "Explain it in plain words"}
+                </button>
+                <span className="text-xs text-muted">Uses Google’s Gemini AI.</span>
+              </div>
+            )}
+            {shownExplanation?.error && (
+              <p role="alert" className="alert">{shownExplanation.error}</p>
+            )}
+            {shownExplanation?.result && (
+              <div className="graph sheet px-5 pb-5 pt-7">
+                <p className="stamp-label">In plain words</p>
+                <p className="mt-4 text-[1.0625rem] leading-relaxed">{shownExplanation.result.summary}</p>
+                <p className="mt-3 border-t border-dashed border-line pt-3">
+                  <b className="font-mono">Try this first: </b>
+                  {shownExplanation.result.tryFirst}
+                </p>
+                <p className="mt-3 text-sm text-muted">Written by AI from the ranking below. Check it against the causes.</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {symptoms.length === 0 ? (
           <div className="graph sheet mt-6 px-5 pb-6 pt-8">
             <p className="font-mono font-bold">No symptoms yet</p>
@@ -137,8 +181,8 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
         )}
 
         <p className="mt-6 text-sm text-muted">
-          Rules from baking chemistry, not AI. Change one thing at a time and
-          log the next bake, so you know what fixed it.
+          The ranking is rules from baking chemistry, not AI. Change one thing
+          at a time and log the next bake, so you know what fixed it.
         </p>
       </section>
 

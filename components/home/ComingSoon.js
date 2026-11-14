@@ -1,21 +1,25 @@
 import Link from "next/link";
 
-// The three AI tools planned for later (Phases 5 and 6). Only the first has
-// something live: its rules-based version (/debugger), so it gets a link.
+// The three AI tools (Phases 5 and 6). Each already works without AI;
+// the AI part switches on once the Gemini key is set.
 const PLANNED_TOOLS = [
   {
     name: "Why did my bake fail?",
-    summary: "Plain-language AI explanations come later. The rules-based debugger works now.",
+    summary: "The rules-based debugger works now. Plain-language AI explanations come next.",
     href: "/debugger",
     linkText: "Try the debugger",
   },
   {
     name: "Substitutions, with the chemistry",
-    summary: "What changes when you swap an ingredient, and why.",
+    summary: "The common swaps are in the notebook now. AI covers the rest soon.",
+    href: "/substitutions",
+    linkText: "Find a swap",
   },
   {
     name: "Find a recipe by describing it",
-    summary: "“Something chewy with brown butter.”",
+    summary: "Keyword matching works now. Smart search that understands “chewy” or “cosy” is next.",
+    href: "/find",
+    linkText: "Describe one",
   },
 ];
 
@@ -28,7 +32,7 @@ export default function ComingSoon() {
       {/* pr-28 keeps the heading clear of the stamp */}
       <h2 className="section-title pr-28">Still in the oven</h2>
       <p className="mt-3 max-w-md">
-        Three AI tools are being built. None of the AI is live yet.
+        Three tools with AI on the way. Each one already works without it.
       </p>
       <ul className="mt-4 grid gap-4">
         {PLANNED_TOOLS.map((tool) => (
