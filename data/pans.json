@@ -1,0 +1,11 @@
+[
+  {"id": "round-15", "label": "Round 15 cm (6 in)", "shape": "round", "diameter": 15},
+  {"id": "round-20", "label": "Round 20 cm (8 in)", "shape": "round", "diameter": 20},
+  {"id": "round-23", "label": "Round 23 cm (9 in)", "shape": "round", "diameter": 23},
+  {"id": "round-25", "label": "Round 25 cm (10 in)", "shape": "round", "diameter": 25},
+  {"id": "square-20", "label": "Square 20 cm (8 in)", "shape": "rectangle", "length": 20, "width": 20},
+  {"id": "square-23", "label": "Square 23 cm (9 in)", "shape": "rectangle", "length": 23, "width": 23},
+  {"id": "rect-33x23", "label": "Rectangle 33 × 23 cm (13 × 9 in)", "shape": "rectangle", "length": 33, "width": 23},
+  {"id": "loaf-21x11", "label": "Loaf tin 21 × 11 cm (8.5 × 4.5 in)", "shape": "rectangle", "length": 21, "width": 11},
+  {"id": "loaf-23x13", "label": "Loaf tin 23 × 13 cm (9 × 5 in)", "shape": "rectangle", "length": 23, "width": 13}
+]

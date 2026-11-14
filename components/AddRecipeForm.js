@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { pans } from "@/lib/pans";
 import { addSavedRecipe } from "@/lib/savedRecipes";
 
 // The same Tailwind classes are used on every field, so name them once.
@@ -31,6 +32,7 @@ export default function AddRecipeForm() {
     prepTime: "",
     bakeTime: "",
     servings: "",
+    pan: "", // a pan id, or "" for no pan
     rating: "",
     instructions: "",
   });
@@ -99,6 +101,8 @@ export default function AddRecipeForm() {
       prepTime: Number(form.prepTime),
       bakeTime: Number(form.bakeTime),
       servings: Number(form.servings),
+      // null means "not baked in a pan"
+      pan: form.pan === "" ? null : form.pan,
       rating: Number(form.rating),
       diet: dietChoices[form.diet],
       // Keep name, amount and unit; the row id was only for the form.
@@ -210,6 +214,23 @@ export default function AddRecipeForm() {
             onChange={handleChange}
             required
           />
+        </label>
+
+        <label className={labelClass}>
+          Pan
+          <select
+            className={inputClass}
+            name="pan"
+            value={form.pan}
+            onChange={handleChange}
+          >
+            <option value="">no pan</option>
+            {pans.map((pan) => (
+              <option key={pan.id} value={pan.id}>
+                {pan.label}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className={labelClass}>
