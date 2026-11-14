@@ -14,8 +14,8 @@ export default function LoginForm() {
 
   if (state.status === "sent") {
     return (
-      <div className="rounded-lg border border-line bg-surface p-4">
-        <p className="font-semibold">Check your email</p>
+      <div className="note tape px-4 pb-4 pt-6">
+        <p className="font-mono font-bold">Check your email</p>
         <p className="mt-1 text-muted">
           A sign-in link is on its way to {state.email}. It works once and
           expires after an hour. Open it in this browser.
@@ -27,11 +27,11 @@ export default function LoginForm() {
   return (
     // action={formAction}: the browser sends the form's fields to the server
     // action. No onSubmit or preventDefault is needed.
-    <form action={formAction} className="space-y-4">
-      <label className="block font-semibold">
+    <form action={formAction} className="note tape space-y-4 px-4 pb-5 pt-7">
+      <label className="label block">
         Email
         <input
-          className="mt-1 w-full rounded border border-line bg-surface p-2 font-normal"
+          className="field mt-1"
           type="email"
           name="email"
           autoComplete="email"
@@ -41,7 +41,7 @@ export default function LoginForm() {
 
       {/* role="alert" makes screen readers announce the message */}
       {state.status === "error" && (
-        <p role="alert" className="rounded border border-foreground p-2 font-semibold">
+        <p role="alert" className="alert">
           {state.message}
         </p>
       )}
@@ -49,7 +49,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded bg-foreground px-4 py-2 font-mono font-bold text-background hover:opacity-90 disabled:opacity-60"
+        className="btn"
       >
         {isPending ? "Sending…" : "Email me a sign-in link"}
       </button>

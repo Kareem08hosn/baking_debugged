@@ -33,6 +33,8 @@ PANS_PATH = DATA_FOLDER / "pans.json"
 WATER_FRACTION = {
     "water": 1.0,
     "milk": 0.87,
+    "buttermilk": 0.9,
+    "yogurt": 0.85,
 }
 
 # A sourdough starter is flour and water mixed together. This assumes a

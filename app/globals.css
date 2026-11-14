@@ -1,21 +1,27 @@
 @import "tailwindcss";
 
-/* Brand colours come from the logo (public/brand/): butter cream and dark
+/* ---------------------------------------------------------------------------
+   Colours
+
+   Brand colours come from the logo (public/brand/): butter cream and dark
    green. They are CSS variables so the theme can swap them in one place.
-   Light theme (the default): cream page, green ink.
-   Dark theme: green page, cream ink.
+     Light theme (the default): cream paper, green ink.
+     Dark theme: green paper, cream ink.
    The theme is chosen by the data-theme attribute on <html>, which is set by
-   the toggle in the header (see lib/theme.js). */
+   the toggle in the footer (see lib/theme.js).
+--------------------------------------------------------------------------- */
 :root {
   /* Tells the browser which colours to use for its own controls
      (dropdown lists, scrollbars). */
   color-scheme: light;
 
   --background: #faf4df; /* the page: a paler tint of the logo cream */
-  --surface: #fffdf3; /* cards and form fields, slightly lighter than the page */
-  --foreground: #14342b; /* text and details: the logo's dark green */
+  --surface: #fffdf3; /* notes, cards and form fields */
+  --foreground: #14342b; /* ink: the logo's dark green */
   --muted: #4b6259; /* secondary text */
-  --line: #d9cfa6; /* borders */
+  --line: #d9cfa6; /* ruled lines and light borders */
+  --highlight: #f6e7b4; /* highlighter pen and tape: the logo's cream */
+  --shadow: rgb(20 52 43 / 0.14); /* the shadow under a note */
 }
 
 /* The dark theme. [data-theme="dark"] means "when <html> has that attribute". */
@@ -27,6 +33,8 @@
   --foreground: #f6e7b4; /* the logo's butter cream */
   --muted: #b9b48f;
   --line: #34604f;
+  --highlight: #2a5a49;
+  --shadow: rgb(0 0 0 / 0.35);
 }
 
 /* "System" follows the device: the same dark colours, but only when the
@@ -41,6 +49,8 @@
     --foreground: #f6e7b4;
     --muted: #b9b48f;
     --line: #34604f;
+    --highlight: #2a5a49;
+    --shadow: rgb(0 0 0 / 0.35);
   }
 }
 
@@ -54,6 +64,7 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-highlight: var(--highlight);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -61,4 +72,193 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
+  /* Paper grain: a tiny SVG image of random speckles, written straight into
+     the CSS as a "data URL" so there is no extra file to download. It tiles
+     across the whole page. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .3 0 0 0 0 .2 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------------------------------------------------------------------------
+   The notebook look
+
+   A few named classes for things Tailwind's one-rule classes can't express
+   neatly (ruled lines, a strip of tape, a rubber stamp), and for styles that
+   repeat on every page (form fields, buttons). "@layer components" tells
+   Tailwind these are building blocks, so its own classes can still override
+   them: class="field w-24" makes a narrow field.
+--------------------------------------------------------------------------- */
+@layer components {
+  /* A highlighter-pen swipe behind text: the bottom 40% of each line is
+     coloured. Used on page titles and the current nav link. */
+  .highlight {
+    background-image: linear-gradient(transparent 58%, var(--highlight) 58%);
+    padding: 0 0.15em;
+    /* If the text wraps, give every line its own swipe */
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* A piece of paper lying on the page. */
+  .note {
+    position: relative; /* so the tape and stamp can be placed on it */
+    background-color: var(--surface);
+    box-shadow:
+      0 1px 0 var(--line),
+      0 10px 22px -10px var(--shadow);
+  }
+
+  /* Ruled lines, one every 28px. Text inside should use a 28px line height
+     (Tailwind: leading-7) so it sits on the lines. */
+  .note-ruled {
+    background-image: repeating-linear-gradient(
+      transparent 0 27px,
+      var(--line) 27px 28px
+    );
+    background-position: 0 20px;
+  }
+
+  /* A strip of tape across the top edge. ::before draws an extra box
+     without needing an extra element in the HTML. */
+  .tape::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 84px;
+    height: 22px;
+    margin-left: -42px;
+    background-color: var(--highlight);
+    opacity: 0.9;
+    transform: rotate(-2deg);
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+
+  /* A round rubber stamp, used for ratings. */
+  .stamp {
+    display: grid;
+    place-content: center;
+    width: 66px;
+    height: 66px;
+    border: 2px solid var(--foreground);
+    border-radius: 50%;
+    background-color: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.15;
+    letter-spacing: 0.06em;
+    text-align: center;
+    transform: rotate(9deg);
+    opacity: 0.85;
+  }
+  .stamp b {
+    display: block;
+    font-size: 17px;
+    letter-spacing: 0;
+  }
+  /* A recipe nobody has test-baked yet: a fainter, dashed stamp */
+  .stamp-untested {
+    border-style: dashed;
+    color: var(--muted);
+    border-color: var(--muted);
+    font-size: 9px;
+  }
+
+  /* Small capital-letter labels: "NO. 03 · BREAD", field names, table heads */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Text inputs, dropdowns and text areas */
+  .field {
+    display: block;
+    width: 100%;
+    border: 1.5px solid var(--foreground);
+    border-radius: 6px;
+    background-color: var(--surface);
+    padding: 0.5rem 0.625rem;
+    /* 16px or more stops iPhones zooming in when a field is tapped */
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--foreground);
+    /* A field usually sits inside a .label, which spaces out and capitalises
+       its text. Typed text shouldn't inherit that. */
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  /* A dropdown written into a line of text: just an underline */
+  .field-inline {
+    border: 0;
+    border-bottom: 1.5px solid var(--foreground);
+    border-radius: 0;
+    background-color: transparent;
+    padding: 0.125rem 0;
+    font: inherit;
+    color: var(--foreground);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  /* Pill buttons. .btn is the main action; .btn-quiet is everything else;
+     .chip is a filter that can be switched on. */
+  .btn,
+  .btn-quiet,
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    border: 1.5px solid var(--foreground);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+  }
+  .btn {
+    background-color: var(--foreground);
+    color: var(--background);
+    padding: 0.625rem 1.25rem;
+    font-weight: 700;
+  }
+  .btn-quiet,
+  .chip {
+    background-color: var(--surface);
+    color: var(--foreground);
+    padding: 0.3125rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+  /* aria-pressed="true" is how a toggle button says "I am on" */
+  .chip[aria-pressed="true"] {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+  .btn:hover,
+  .btn-quiet:hover,
+  .chip:hover {
+    box-shadow: 2px 2px 0 var(--line);
+  }
+  .btn:disabled,
+  .btn-quiet:disabled {
+    opacity: 0.45;
+    cursor: default;
+    box-shadow: none;
+  }
+
+  /* A message that needs attention (errors) */
+  .alert {
+    border: 1.5px dashed var(--foreground);
+    border-radius: 6px;
+    background-color: var(--surface);
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+  }
+}
+
+/* Keyboard users need to see which control is selected */
+:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
 }

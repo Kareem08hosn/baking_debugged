@@ -139,6 +139,16 @@ class HydrationTests(unittest.TestCase):
         }
         self.assertEqual(scaler.hydration(recipe), 87)
 
+    def test_yogurt_and_buttermilk_count_for_their_water(self):
+        recipe = {
+            "servings": 1,
+            "ingredients": [
+                {"name": "flour", "amount": 100, "unit": "g"},
+                {"name": "yogurt", "amount": 100, "unit": "g"},
+            ],
+        }
+        self.assertEqual(scaler.hydration(recipe), 85)
+
     def test_no_liquid_is_zero(self):
         self.assertEqual(scaler.hydration(CAKE), 0)
 

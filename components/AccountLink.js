@@ -57,14 +57,14 @@ export default function AccountLink() {
   }
 
   return (
-    <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-      {/* break-all lets a long email wrap on a narrow phone */}
-      <span className="break-all">{email}</span>
-      <button
-        type="button"
-        onClick={handleSignOut}
-        className="rounded border border-background/40 px-2 py-1 hover:border-background"
-      >
+    <span className="flex items-center gap-x-3">
+      {/* The email is hidden on phones to keep the header on one line;
+          "hidden sm:inline" means hidden, then shown from the sm width up.
+          truncate cuts a long address off with "…". */}
+      <span className="hidden max-w-48 truncate text-muted sm:inline">
+        {email}
+      </span>
+      <button type="button" onClick={handleSignOut} className="hover:underline">
         Sign out
       </button>
     </span>

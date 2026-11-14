@@ -24,6 +24,12 @@ create table public.recipes (
   ingredients jsonb not null,
   instructions text[] not null,
 
+  -- where the recipe was adapted from: {"name": "King Arthur Baking", "url": "https://..."}
+  -- (null for recipes people wrote themselves)
+  source jsonb,
+  -- true once the site owner has baked it; false shows an "Untested" badge
+  tested boolean not null default false,
+
   created_at timestamptz not null default now()
 );
 

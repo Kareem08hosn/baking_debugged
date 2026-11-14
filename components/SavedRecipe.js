@@ -22,8 +22,10 @@ export default function SavedRecipe({ id }) {
   if (!recipe) {
     return (
       <>
-        <h1 className="mt-4 font-mono text-3xl font-bold">Recipe not found</h1>
-        <p className="text-muted">
+        <h1 className="mt-4 font-mono text-[2rem] font-bold leading-tight">
+          <span className="highlight">Recipe not found</span>
+        </h1>
+        <p className="mt-2 text-muted">
           There is no recipe at this address. Recipes you add are saved in the
           browser you added them with.
         </p>
@@ -42,13 +44,13 @@ export default function SavedRecipe({ id }) {
   return (
     <>
       <RecipeDetail recipe={recipe} />
-      <p className="mt-8 text-sm text-muted">
+      <p className="mt-10 text-sm text-muted">
         You added this recipe. It is saved in this browser only.
       </p>
       <button
         type="button"
         onClick={handleDelete}
-        className="mt-2 rounded border border-line bg-surface px-3 py-1 font-mono text-sm hover:border-foreground"
+        className="btn-quiet mt-2"
       >
         Delete this recipe
       </button>

@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 import { pans } from "@/lib/pans";
 import { addSavedRecipe } from "@/lib/savedRecipes";
 
-// The same Tailwind classes are used on every field, so name them once.
-// font-normal stops the typed text inheriting the label's bold.
-const inputClass =
-  "mt-1 w-full rounded border border-line bg-surface p-2 font-normal";
-const labelClass = "block font-semibold";
+// "field" and "label" are our own classes from app/globals.css. The same
+// pair is used on every input, so name them once.
+const inputClass = "field mt-1";
+const labelClass = "label block";
 
 // What each choice in the Diet dropdown stores on the recipe.
 // Vegan food is also vegetarian, so "vegan" stores both.
@@ -120,7 +119,7 @@ export default function AddRecipeForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="note tape space-y-4 px-4 pb-5 pt-7">
       {/* A "controlled" input: React state holds the value (value=...) and
           every keystroke updates the state (onChange=...). */}
       <label className={labelClass}>
@@ -251,14 +250,14 @@ export default function AddRecipeForm() {
 
       {/* <fieldset> groups related fields; <legend> is the group's title */}
       <fieldset className="space-y-2">
-        <legend className="font-semibold">Ingredients</legend>
+        <legend className="label mb-1">Ingredients</legend>
 
         {ingredients.map((row) => (
           <div key={row.id} className="flex gap-2">
             {/* aria-label names the field for screen readers, since these
                 inputs have no visible label of their own */}
             <input
-              className={inputClass}
+              className="field min-w-0"
               aria-label="Ingredient name"
               placeholder="flour"
               value={row.name}
@@ -268,7 +267,7 @@ export default function AddRecipeForm() {
               required
             />
             <input
-              className="mt-1 w-24 rounded border border-line bg-surface p-2 font-normal"
+              className="field w-24 flex-none font-mono"
               aria-label="Amount"
               type="number"
               min="0"
@@ -281,7 +280,7 @@ export default function AddRecipeForm() {
               required
             />
             <select
-              className="mt-1 rounded border border-line bg-surface p-2"
+              className="field w-auto flex-none"
               aria-label="Unit"
               value={row.unit}
               onChange={(event) =>
@@ -296,7 +295,7 @@ export default function AddRecipeForm() {
                 can't be removed. */}
             <button
               type="button"
-              className="mt-1 rounded border border-line bg-surface px-3 disabled:opacity-40"
+              className="btn-quiet flex-none"
               aria-label="Remove ingredient"
               onClick={() => removeIngredient(row.id)}
               disabled={ingredients.length === 1}
@@ -308,7 +307,7 @@ export default function AddRecipeForm() {
 
         <button
           type="button"
-          className="rounded border border-line bg-surface px-3 py-1 font-mono text-sm hover:border-foreground"
+          className="btn-quiet"
           onClick={addIngredient}
         >
           + Add ingredient
@@ -329,14 +328,14 @@ export default function AddRecipeForm() {
 
       {/* role="alert" makes screen readers announce the message */}
       {error !== "" && (
-        <p role="alert" className="rounded border border-foreground p-2 font-semibold">
+        <p role="alert" className="alert">
           {error}
         </p>
       )}
 
       <button
         type="submit"
-        className="rounded bg-foreground px-4 py-2 font-mono font-bold text-background hover:opacity-90"
+        className="btn"
       >
         Save recipe
       </button>

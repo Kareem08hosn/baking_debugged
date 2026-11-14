@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/themeSettings";
 import "./globals.css";
@@ -53,6 +54,7 @@ export default function RootLayout({ children }) {
         <SiteHeader />
         {/* children is whichever page is being shown */}
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

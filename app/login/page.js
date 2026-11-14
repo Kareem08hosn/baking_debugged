@@ -11,8 +11,10 @@ export default async function LoginPage({ searchParams }) {
   const user = await getUser();
 
   return (
-    <main className="mx-auto w-full max-w-md px-4 py-8">
-      <h1 className="font-mono text-3xl font-bold">Sign in</h1>
+    <main className="mx-auto w-full max-w-md px-4 pt-8">
+      <h1 className="font-mono text-[2rem] font-bold leading-tight sm:text-[2.75rem]">
+        <span className="highlight">Sign in</span>
+      </h1>
 
       {user ? (
         <p className="mt-4">
@@ -23,14 +25,14 @@ export default async function LoginPage({ searchParams }) {
         </p>
       ) : (
         <>
-          <p className="mb-6 mt-2 text-muted">
+          <p className="mb-8 mt-2 text-muted">
             No password needed. Enter your email and we’ll send you a link
             that signs you in. New here? The same link creates your account.
           </p>
 
           {/* Shown when a sign-in link didn't work (see app/auth/confirm) */}
           {error === "link" && (
-            <p role="alert" className="mb-4 rounded border border-foreground p-2 font-semibold">
+            <p role="alert" className="alert mb-4">
               That sign-in link has expired or was already used. Request a new
               one below.
             </p>

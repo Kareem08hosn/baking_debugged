@@ -15,8 +15,15 @@ export default async function Home() {
   return (
     // className is JSX's word for the HTML "class" attribute.
     // These are Tailwind classes: each one applies a single CSS rule.
-    <main className="mx-auto w-full max-w-5xl px-4 py-8">
-      <h1 className="mb-6 font-mono text-3xl font-bold">Recipes</h1>
+    <main className="mx-auto w-full max-w-5xl px-4 pt-5">
+      {/* "highlight" is one of our own classes, defined in app/globals.css */}
+      <h1 className="font-mono text-[2.5rem] font-bold leading-tight sm:text-[3.25rem]">
+        <span className="highlight">Recipes</span>
+      </h1>
+      <p className="mb-4 mt-1.5 max-w-xl text-muted">
+        Notes from the bench. Every bake measured in grams, with what worked
+        and what didn’t.
+      </p>
 
       {/* Hand the data to RecipeList as a "prop" (like a function argument) */}
       <RecipeList recipes={recipes} />

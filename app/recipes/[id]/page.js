@@ -23,7 +23,7 @@ export default async function RecipePage({ params }) {
   const recipe = await getRecipeById(id);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8">
+    <main className="mx-auto w-full max-w-5xl px-4 pt-5">
       <Link href="/" className="font-mono text-sm text-muted hover:underline">
         ← All recipes
       </Link>
