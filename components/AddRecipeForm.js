@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { pans } from "@/lib/pans";
-import { addSavedRecipe } from "@/lib/savedRecipes";
+import { createRecipe, updateRecipe } from "@/app/recipes/actions";
 
 // "field" and "label" are our own classes from app/globals.css. The same
 // pair is used on every input, so name them once.
@@ -32,31 +32,74 @@ const dietChoices = {
   vegan: ["vegetarian", "vegan"],
 };
 
-export default function AddRecipeForm() {
+// The form's starting values. Empty for a new recipe; for editing, the
+// existing recipe turned back into form text (numbers become "250", the
+// steps become one per line).
+function initialForm(recipe) {
+  if (!recipe) {
+    return {
+      name: "",
+      category: "",
+      difficulty: "easy",
+      diet: "none",
+      prepTime: "",
+      bakeTime: "",
+      servings: "",
+      pan: "", // a pan id, or "" for no pan
+      rating: "",
+      instructions: "",
+    };
+  }
+  return {
+    name: recipe.name,
+    category: recipe.category,
+    difficulty: recipe.difficulty,
+    // The opposite of dietChoices above: ["vegetarian", "vegan"] -> "vegan"
+    diet: recipe.diet.includes("vegan")
+      ? "vegan"
+      : recipe.diet.includes("vegetarian")
+        ? "vegetarian"
+        : "none",
+    prepTime: String(recipe.prepTime),
+    bakeTime: String(recipe.bakeTime),
+    servings: String(recipe.servings),
+    pan: recipe.pan ?? "",
+    rating: recipe.rating == null ? "" : String(recipe.rating),
+    instructions: recipe.instructions.join("\n"),
+  };
+}
+
+function initialIngredients(recipe) {
+  if (!recipe) {
+    return [{ id: "first", name: "", amount: "", unit: "g" }];
+  }
+  // The position makes a unique id for each existing row
+  return recipe.ingredients.map((ingredient, index) => ({
+    id: `row-${index}`,
+    name: ingredient.name,
+    amount: String(ingredient.amount),
+    unit: ingredient.unit,
+  }));
+}
+
+// The add-recipe form. Given a "recipe", it edits that recipe instead of
+// adding a new one (used by /recipes/[id]/edit).
+export default function AddRecipeForm({ recipe: existing = null }) {
   const router = useRouter();
+  const isEditing = existing !== null;
 
   // One state object holds all the simple fields. Inputs always give text,
   // so numbers are stored as text here and converted when saving.
-  const [form, setForm] = useState({
-    name: "",
-    category: "",
-    difficulty: "easy",
-    diet: "none",
-    prepTime: "",
-    bakeTime: "",
-    servings: "",
-    pan: "", // a pan id, or "" for no pan
-    rating: "",
-    instructions: "",
-  });
+  // useState(() => ...) runs the function once, for the first value only.
+  const [form, setForm] = useState(() => initialForm(existing));
 
   // Ingredients are a list of rows the user can add to and remove from.
   // Each row has its own id so React can tell the rows apart.
-  const [ingredients, setIngredients] = useState([
-    { id: "first", name: "", amount: "", unit: "g" },
-  ]);
+  const [ingredients, setIngredients] = useState(() => initialIngredients(existing));
 
   const [error, setError] = useState("");
+  // True while the recipe is being saved, so the button can't be pressed twice
+  const [isSaving, setIsSaving] = useState(false);
 
   // One function handles every simple field. Each input has a "name" that
   // matches a key in the form object.
@@ -87,7 +130,8 @@ export default function AddRecipeForm() {
     );
   }
 
-  function handleSubmit(event) {
+  // "async" because saving waits for the server.
+  async function handleSubmit(event) {
     // By default a form reloads the page when submitted. Stop that so
     // JavaScript can handle it.
     event.preventDefault();
@@ -104,10 +148,8 @@ export default function AddRecipeForm() {
       return;
     }
 
+    // No id: the database gives the recipe one when it is saved.
     const recipe = {
-      // The current time in milliseconds: unique enough for an id, and far
-      // above the built-in recipes' ids (1, 2, 3...).
-      id: Date.now(),
       name: form.name.trim(),
       category: form.category.trim().toLowerCase(),
       difficulty: form.difficulty,
@@ -127,9 +169,20 @@ export default function AddRecipeForm() {
       instructions: steps,
     };
 
-    addSavedRecipe(recipe);
+    // Send it to the server action (app/recipes/actions.js), which checks
+    // it again and saves it under the signed-in person's account.
+    setError("");
+    setIsSaving(true);
+    const result = isEditing
+      ? await updateRecipe(existing.id, recipe)
+      : await createRecipe(recipe);
+    if (result.error) {
+      setError(result.error);
+      setIsSaving(false);
+      return;
+    }
     // Go to the new recipe's page.
-    router.push(`/recipes/${recipe.id}`);
+    router.push(`/recipes/${result.id}`);
   }
 
   return (
@@ -319,10 +372,10 @@ export default function AddRecipeForm() {
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <button type="submit" className="btn">
-          Save recipe
+        <button type="submit" className="btn" disabled={isSaving}>
+          {isSaving ? "Saving…" : isEditing ? "Save changes" : "Save recipe"}
         </button>
-        <p className="hand -rotate-1 text-muted">saved in this browser only, for now</p>
+        <p className="hand -rotate-1 text-muted">only you can see it</p>
       </div>
 
       {/* role="alert" makes screen readers announce the message */}

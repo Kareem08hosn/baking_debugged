@@ -5,7 +5,8 @@
 --
 -- WARNING: the first statement DELETES every row in public.recipes and
 -- restarts the ids at 1, so it replaces the old starter recipes completely.
--- Do not run it once real user recipes live in this table.
+-- Do not run it once real user recipes live in this table: it would delete
+-- every user's recipes too.
 --
 -- Each recipe was adapted (ingredients converted to grams, instructions
 -- rewritten) from a King Arthur Baking recipe; "source" links to the original.

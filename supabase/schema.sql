@@ -30,21 +30,56 @@ create table public.recipes (
   -- true once the site owner has baked it; false shows an "Untested" badge
   tested boolean not null default false,
 
+  -- who added it: null for the site's own recipes, otherwise the user's id
+  -- (filled in automatically with whoever is signed in)
+  owner uuid references auth.users (id) on delete cascade default auth.uid(),
+
   created_at timestamptz not null default now()
 );
+
+create index recipes_owner_idx on public.recipes (owner);
 
 -- Row Level Security (RLS): with it on, nobody can do anything to the table
 -- unless a policy below allows it.
 alter table public.recipes enable row level security;
 
--- Visitors ("anon" = not logged in, "authenticated" = logged in) may read.
+-- Reading: everyone ("anon" = not signed in, "authenticated" = signed in)
+-- can read the site's recipes; people can also read their own.
+-- (select auth.uid()) is the signed-in user's id, or null.
 grant select on public.recipes to anon, authenticated;
 
-create policy "anyone can read recipes"
+create policy "anyone can read site recipes"
   on public.recipes
   for select
   to anon, authenticated
-  using (true);
+  using (owner is null);
 
--- There is no policy for insert, update or delete, so the website cannot
--- change recipes yet. That comes with login (Phase 3, step 9).
+create policy "people can read their own recipes"
+  on public.recipes
+  for select
+  to authenticated
+  using (owner = (select auth.uid()));
+
+-- Writing: signed-in people, only on their own rows. "with check" tests the
+-- new row, so nobody can add or move a recipe under someone else's id.
+-- Nobody can change the site's recipes (owner is null) from the website.
+grant insert, update, delete on public.recipes to authenticated;
+
+create policy "people can add their own recipes"
+  on public.recipes
+  for insert
+  to authenticated
+  with check (owner = (select auth.uid()));
+
+create policy "people can change their own recipes"
+  on public.recipes
+  for update
+  to authenticated
+  using (owner = (select auth.uid()))
+  with check (owner = (select auth.uid()));
+
+create policy "people can delete their own recipes"
+  on public.recipes
+  for delete
+  to authenticated
+  using (owner = (select auth.uid()));

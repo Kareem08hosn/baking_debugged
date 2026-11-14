@@ -1,6 +1,6 @@
 import Link from "next/link";
 import RecipeDetail from "@/components/RecipeDetail";
-import SavedRecipe from "@/components/SavedRecipe";
+import UserRecipe from "@/components/UserRecipe";
 import { getRecipeById } from "@/lib/recipes";
 
 // Next.js calls this to fill in the page's <title> (the browser tab text).
@@ -30,9 +30,9 @@ export default async function RecipePage({ params }) {
 
       {/* condition ? a : b means "if condition then a, otherwise b".
           Recipes from the database are drawn here on the server. Any other
-          id might be a recipe saved in the visitor's browser, so SavedRecipe
-          checks there. */}
-      {recipe ? <RecipeDetail recipe={recipe} /> : <SavedRecipe id={id} />}
+          id might be someone's own (private) recipe, so UserRecipe looks
+          for it in the browser, where the sign-in cookie is. */}
+      {recipe ? <RecipeDetail recipe={recipe} /> : <UserRecipe id={id} />}
     </main>
   );
 }

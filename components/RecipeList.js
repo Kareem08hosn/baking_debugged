@@ -5,6 +5,7 @@
 import { useState } from "react";
 import RecipeCard from "@/components/RecipeCard";
 import { useBookmarks } from "@/lib/bookmarks";
+import { useMyRecipes } from "@/lib/myRecipes";
 import { useSavedRecipes } from "@/lib/savedRecipes";
 
 // "easy" < "medium" < "hard" isn't alphabetical, so give each one a number.
@@ -77,11 +78,17 @@ function SearchIcon() {
 // { recipes: builtInRecipes } pulls the "recipes" prop out of what page.js
 // passed in and renames it, because the full list is built just below.
 export default function RecipeList({ recipes: builtInRecipes }) {
-  // Recipes added through the form live in the browser (see lib/savedRecipes.js).
-  // The hook gives null until they have loaded; ?? swaps that for an empty list.
-  const savedRecipes = useSavedRecipes() ?? [];
-  // [...a, ...b] makes one new array holding everything from both.
-  const recipes = [...builtInRecipes, ...savedRecipes];
+  // The signed-in person's own recipes, from the database (lib/myRecipes.js).
+  const myRecipes = useMyRecipes().recipes;
+  // Recipes added before accounts existed live in this browser
+  // (lib/savedRecipes.js). The hook gives null until they have loaded; ??
+  // swaps that for an empty list. isLocal marks them as the person's own.
+  const localRecipes = (useSavedRecipes() ?? []).map((recipe) => ({
+    ...recipe,
+    isLocal: true,
+  }));
+  // [...a, ...b, ...c] makes one new array holding everything from all three.
+  const recipes = [...builtInRecipes, ...myRecipes, ...localRecipes];
   // Ids of the recipes saved with the Save button (lib/bookmarks.js)
   const bookmarks = useBookmarks() ?? [];
 
@@ -121,13 +128,24 @@ export default function RecipeList({ recipes: builtInRecipes }) {
     if (value === "saved") {
       return bookmarks.includes(recipe.id);
     }
+    if (value === "mine") {
+      return recipe.owner != null || recipe.isLocal === true;
+    }
     return recipe.category === value;
   }
 
   // The "saved" tab only appears once something is saved (or while it is
   // the chosen tab, so it doesn't vanish under you after un-saving).
   const showSavedTab = bookmarks.length > 0 || category === "saved";
-  const tabs = ["all", ...(showSavedTab ? ["saved"] : []), ...categories];
+  // Same for "mine": the person's own recipes
+  const hasOwn = recipes.some((recipe) => inTab(recipe, "mine"));
+  const showMineTab = hasOwn || category === "mine";
+  const tabs = [
+    "all",
+    ...(showMineTab ? ["mine"] : []),
+    ...(showSavedTab ? ["saved"] : []),
+    ...categories,
+  ];
 
   // filter() keeps only the recipes where the function returns true.
   // A recipe must pass every check (&& means AND, || means OR).
