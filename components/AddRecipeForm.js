@@ -257,7 +257,7 @@ export default function AddRecipeForm({ recipe: existing = null }) {
               <input id="recipe-bake" className={numberClass} type="number" min="0" inputMode="numeric" name="bakeTime" value={form.bakeTime} onChange={handleChange} required />
             </div>
             <div>
-              <label htmlFor="recipe-servings" className={labelClass}>Servings</label>
+              <label htmlFor="recipe-servings" className={labelClass}>Makes / serves</label>
               <input id="recipe-servings" className={numberClass} type="number" min="1" inputMode="numeric" name="servings" value={form.servings} onChange={handleChange} required />
             </div>
             <div>

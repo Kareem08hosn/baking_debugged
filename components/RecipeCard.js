@@ -1,6 +1,7 @@
 import Link from "next/link";
 import RatingStamp from "@/components/RatingStamp";
 import { hydration, showsHydration } from "@/lib/scaler";
+import { yieldWord } from "@/lib/servings";
 
 // How many of the three difficulty dots are filled in.
 const difficultyDots = { easy: 1, medium: 2, hard: 3 };
@@ -14,10 +15,10 @@ export default function RecipeCard({ recipe, position }) {
   const dots = "●".repeat(filled) + "○".repeat(3 - filled);
 
   // Bread doughs get their hydration as the headline ratio; everything else
-  // shows how many it serves.
+  // shows how much it makes: "makes 24" for cookies, "serves 8" for a cake.
   const detail = showsHydration(recipe)
     ? `hydration ${hydration(recipe)}%`
-    : `serves ${recipe.servings}`;
+    : `${yieldWord(recipe)} ${recipe.servings}`;
 
   // % gives the remainder after dividing: even positions tilt left, odd right.
   const tilt = position % 2 === 0 ? "-rotate-[0.7deg]" : "rotate-[0.6deg]";
@@ -32,7 +33,7 @@ export default function RecipeCard({ recipe, position }) {
       href={`/recipes/${recipe.id}`}
       className={`note note-ruled tape block h-full px-4 pb-3.5 pt-6.5 transition-[rotate,translate] duration-200 hover:-translate-y-1 hover:rotate-0 focus-visible:-translate-y-1 focus-visible:rotate-0 ${tilt}`}
     >
-      {/* The rating (or "untested"), as a rubber stamp in the corner */}
+      {/* TESTED with a score, or UNTESTED: a rubber stamp in the corner */}
       <RatingStamp rating={recipe.rating} tested={recipe.tested} className="absolute right-3 top-5.5" />
 
       {/* leading-7 is a 28px line height, matching the ruled lines.

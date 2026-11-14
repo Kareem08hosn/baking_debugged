@@ -24,11 +24,6 @@ function compareRecipes(a, b, sortBy) {
   if (sortBy === "difficulty") {
     return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]; // easiest first
   }
-  if (sortBy === "rating") {
-    // Highest first, so b and a are swapped. Recipes with no rating
-    // (null); ?? 0 counts them as 0 so they go to the end.
-    return (b.rating ?? 0) - (a.rating ?? 0);
-  }
   return 0;
 }
 
@@ -256,7 +251,10 @@ export default function RecipeList({ recipes: builtInRecipes }) {
           {recipes.length} recipes
         </p>
 
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        {/* max-sm:contents: on phones this wrapper "disappears" and its
+            children line up next to the count, so the strip takes two rows
+            instead of three. */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 max-sm:contents">
           <label>
             <span className="text-muted">level </span>
             <select
@@ -298,7 +296,6 @@ export default function RecipeList({ recipes: builtInRecipes }) {
               <option value="name">name</option>
               <option value="bakeTime">bake time</option>
               <option value="difficulty">difficulty</option>
-              <option value="rating">rating</option>
             </select>
           </label>
 

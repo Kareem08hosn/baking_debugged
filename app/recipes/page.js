@@ -14,7 +14,10 @@ export default async function RecipesPage() {
 
   return (
     <main className="page pt-6">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+      {/* On phones this stacks: title, one sentence, then the three links on
+          ONE line, so the recipes start as high up the screen as possible.
+          From "sm" up the links sit to the right of the title. */}
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div>
           <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
             <span className="highlight">Recipes</span>
@@ -23,21 +26,27 @@ export default async function RecipesPage() {
             Every bake measured in grams. Each one scales to your servings or
             pan, and converts to cups.
           </p>
-          <p className="hand mt-2 -rotate-1 text-muted">
+          {/* A margin note: decoration, so phones skip it to save a line */}
+          <p className="hand mt-2 -rotate-1 text-muted max-sm:hidden">
             dashed stamp = adapted, not test-baked here yet
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/find" className="btn-paper">
+        {/* Other ways in. Plain links, not buttons, so all three fit one row
+            on a phone. min-h-9 keeps each one tall enough to tap (36px). */}
+        <nav
+          aria-label="Other ways to find or add a recipe"
+          className="flex flex-wrap gap-x-4 text-[0.8125rem]"
+        >
+          <Link href="/find" className="link inline-flex min-h-9 items-center">
             Describe it
           </Link>
-          <Link href="/pantry" className="btn-paper">
+          <Link href="/pantry" className="link inline-flex min-h-9 items-center">
             What can I make?
           </Link>
-          <Link href="/recipes/new" className="btn-quiet self-center">
+          <Link href="/recipes/new" className="link inline-flex min-h-9 items-center">
             Add a recipe
           </Link>
-        </div>
+        </nav>
       </div>
 
       {/* Hand the data to RecipeList as a "prop" (like a function argument) */}

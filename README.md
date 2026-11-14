@@ -76,4 +76,4 @@ The notebook reads `python/data/bakes.csv`, the CSV exported from the site’s b
 
 ## Credits
 
-The starter recipes are adapted (converted to grams, instructions rewritten) from recipes published by King Arthur Baking. Each recipe page links to its original and is marked “untested” until it has been baked here.
+The starter recipes are adapted (converted to grams, instructions rewritten) from recipes published by King Arthur Baking. Each recipe page links to its original and is marked “untested”, with no rating, until it has been baked here. Other sites’ star ratings are never shown.

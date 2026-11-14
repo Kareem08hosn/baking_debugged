@@ -92,13 +92,13 @@ export default async function AboutPage() {
         </h2>
         <div className="mt-8 grid gap-8 md:grid-cols-2">
           <div className="note flex gap-5 px-5 py-6">
-            <RatingStamp rating={4.6} tested={false} className="flex-none" />
+            <RatingStamp tested={false} className="flex-none" />
             <div>
               <h3 className="font-mono font-bold">Untested</h3>
               <p className="mt-1.5">
                 Adapted from another site and rewritten in grams, but not
-                baked here yet. The stars are the original site’s rating, and
-                every one of these links to its source.
+                baked here yet, so it has no rating. Every one of these links
+                to its source.
               </p>
             </div>
           </div>

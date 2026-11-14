@@ -20,6 +20,7 @@ import {
   scaleRecipe,
   showsHydration,
 } from "@/lib/scaler";
+import { yieldWord } from "@/lib/servings";
 import { UNIT_SYSTEMS, formatAmount, hasVolume } from "@/lib/units";
 
 // One cell in the strip of key numbers under the title.
@@ -108,6 +109,9 @@ export default function RecipeDetail({ recipe, canSave = true }) {
   }
 
   const isUntested = recipe.tested === false;
+  // "makes" for cookies and other separate pieces, "serves" for the rest.
+  // The same word labels the number under the title and the box that changes it.
+  const yieldLabel = yieldWord(recipe);
   // The chemistry notes that fit this recipe (lib/chemistry/topics.js)
   const chemistry = topicsForRecipe(recipe);
 
@@ -138,7 +142,8 @@ export default function RecipeDetail({ recipe, canSave = true }) {
 
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
         {/* Where the recipe was adapted from. The round stamp above
-            already says UNTESTED; this line says what that means. */}
+            already says UNTESTED; this line says what that means. The other
+            site's star rating is deliberately not shown. */}
         {recipe.source && (
           <p className="text-sm text-muted">
             Adapted from{" "}
@@ -152,8 +157,6 @@ export default function RecipeDetail({ recipe, canSave = true }) {
               {/* Screen readers are told the link opens a new tab */}
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
-            {recipe.rating != null && isUntested &&
-              `, rated ${recipe.rating}/5 there`}
             .{isUntested && " Not test-baked here yet."}
           </p>
         )}
@@ -167,7 +170,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
           paper-coloured, and gap-px leaves a 1px gap between cells for the
           background to show through. */}
       <dl className="note mt-7 grid grid-cols-2 gap-px bg-line sm:grid-cols-4">
-        <Stat label="Serves" value={shown.servings} />
+        <Stat label={yieldLabel} value={shown.servings} />
         <Stat label="Prep" value={`${recipe.prepTime} min`} />
         <Stat
           label="Bake"
@@ -201,13 +204,13 @@ export default function RecipeDetail({ recipe, canSave = true }) {
           <div className="graph mt-4 print:hidden grid gap-4 border-[1.5px] border-foreground p-3.5">
             <div>
               <label htmlFor="servings" className="label block">
-                Servings
+                {yieldLabel}
               </label>
               <div className="mt-1.5 flex items-center gap-2">
                 <button
                   type="button"
                   className="btn-round"
-                  aria-label="Fewer servings"
+                  aria-label="Make less"
                   disabled={isValid && servings <= 1}
                   onClick={() => stepServings(-1)}
                 >
@@ -227,7 +230,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
                 <button
                   type="button"
                   className="btn-round"
-                  aria-label="More servings"
+                  aria-label="Make more"
                   onClick={() => stepServings(1)}
                 >
                   +
@@ -289,7 +292,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
                 className="justify-self-start font-mono text-sm underline underline-offset-4"
                 onClick={handleReset}
               >
-                Reset to {recipe.servings} servings
+                Reset ({yieldLabel} {recipe.servings})
               </button>
             )}
           </div>
@@ -355,8 +358,9 @@ export default function RecipeDetail({ recipe, canSave = true }) {
             )}
             {isScaled && (
               <p>
-                Scaled from {recipe.servings} servings. Bake time and any
-                amounts written in the steps are for the original size.
+                Scaled from the original, which {yieldLabel}{" "}
+                {recipe.servings}. Bake time and any amounts written in the
+                steps are for the original size.
                 {/* Extra warning when the pan itself changed */}
                 {originalPan &&
                   panId !== "" &&

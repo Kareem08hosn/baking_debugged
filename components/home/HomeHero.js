@@ -2,8 +2,8 @@ import Link from "next/link";
 import HandArrow from "@/components/HandArrow";
 import RecipeCard from "@/components/RecipeCard";
 
-// The top of the homepage: the tagline, two buttons, and the top-rated
-// recipe as a card dropped on a sheet of graph paper.
+// The top of the homepage: the tagline, two buttons, and this week's
+// recipe (see lib/featured.js) as a card dropped on a sheet of graph paper.
 // "recipe" may be null (an empty database); then the card is left out.
 export default function HomeHero({ recipe }) {
   return (
@@ -45,7 +45,7 @@ export default function HomeHero({ recipe }) {
       {recipe && (
         <div className="relative mx-auto w-full max-w-84 pt-11">
           <p className="hand absolute -top-1 left-1 flex -rotate-[4deg] items-start gap-1">
-            highest rated in the book
+            this week’s page
             <HandArrow shape="downRight" className="mt-2" />
           </p>
           {/* A sheet of graph paper peeking out from behind the card */}

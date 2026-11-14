@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test \"lib/**/*.test.js\"",
-    "embed": "node --env-file=.env.local scripts/embed-recipes.mjs"
+    "embed": "node --env-file=.env.local scripts/embed-recipes.mjs",
+    "seed:sql": "node scripts/build-seed.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
