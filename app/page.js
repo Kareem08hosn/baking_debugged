@@ -1,5 +1,5 @@
-import RecipeList from "./RecipeList";
 // "@/" is a shortcut for the project root folder (set up in jsconfig.json)
+import RecipeList from "@/components/RecipeList";
 import { recipes } from "@/lib/recipes";
 
 export default function Home() {

@@ -71,7 +71,7 @@ export default function RecipeList({ recipes }) {
         <label>
           Sort by{" "}
           <select
-            className="rounded border p-1"
+            className="rounded border border-line p-1"
             value={sortBy}
             // Runs whenever the user picks an option; event.target is the <select>
             onChange={(event) => setSortBy(event.target.value)}
@@ -86,7 +86,7 @@ export default function RecipeList({ recipes }) {
         <label>
           Category{" "}
           <select
-            className="rounded border p-1"
+            className="rounded border border-line p-1"
             value={category}
             onChange={(event) => setCategory(event.target.value)}
           >
@@ -103,7 +103,7 @@ export default function RecipeList({ recipes }) {
         <label>
           Difficulty{" "}
           <select
-            className="rounded border p-1"
+            className="rounded border border-line p-1"
             value={difficulty}
             onChange={(event) => setDifficulty(event.target.value)}
           >
@@ -117,7 +117,7 @@ export default function RecipeList({ recipes }) {
         <label>
           Diet{" "}
           <select
-            className="rounded border p-1"
+            className="rounded border border-line p-1"
             value={diet}
             onChange={(event) => setDiet(event.target.value)}
           >
@@ -131,15 +131,18 @@ export default function RecipeList({ recipes }) {
         </label>
       </div>
 
-      <p className="mb-4 text-gray-500">
+      <p className="mb-4 text-muted">
         Showing {sortedRecipes.length} of {recipes.length} recipes
       </p>
+
+      {/* && means "only show this if the left side is true" */}
+      {sortedRecipes.length === 0 && <p>No recipes match these filters.</p>}
 
       <ul className="space-y-4">
         {/* .map() runs once per recipe and turns each one into an <li> */}
         {sortedRecipes.map((recipe) => (
           // key lets React tell the list items apart; it must be unique
-          <li key={recipe.id} className="rounded-lg border p-4">
+          <li key={recipe.id} className="rounded-lg border border-line p-4">
             <h2 className="text-xl font-semibold">
               {/* Backticks make a template string: ${...} drops a value in,
                   so recipe 3 links to "/recipes/3" */}
@@ -151,9 +154,10 @@ export default function RecipeList({ recipes }) {
               {recipe.category} · {recipe.difficulty} · {recipe.bakeTime} min
             </p>
             <p>★ {recipe.rating}</p>
-            {/* join() glues the ingredients array into one string */}
-            <p className="text-sm text-gray-500">
-              {recipe.ingredients.join(", ")}
+            {/* Each ingredient is an object, so pull out just the names first;
+                join() then glues them into one string */}
+            <p className="text-sm text-muted">
+              {recipe.ingredients.map((ingredient) => ingredient.name).join(", ")}
             </p>
           </li>
         ))}

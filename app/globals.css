@@ -1,26 +1,40 @@
 @import "tailwindcss";
 
+/* Colours are CSS variables so light and dark mode can swap them in one place. */
 :root {
+  /* Tells the browser both modes are supported, so built-in controls
+     (dropdowns, scrollbars) switch colours along with the page. */
+  color-scheme: light dark;
+
   --background: #ffffff;
   --foreground: #171717;
+  --muted: #6b7280; /* secondary text */
+  --line: #d4d4d8; /* borders */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* Applies when the visitor's device is set to dark mode. */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --muted: #a1a1aa;
+    --line: #3f3f46;
   }
+}
+
+/* Registers the variables with Tailwind, which creates classes from them:
+   --color-muted gives text-muted, --color-line gives border-line, and
+   --font-sans makes the Geist font (loaded in layout.js) the default. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
