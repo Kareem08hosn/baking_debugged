@@ -24,7 +24,7 @@ export default async function RecipePage({ params }) {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 pt-5">
-      <Link href="/" className="font-mono text-sm text-muted hover:underline">
+      <Link href="/recipes" className="font-mono text-sm text-muted hover:underline">
         ← All recipes
       </Link>
 

@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }) {
       {user ? (
         <p className="mt-4">
           You are signed in as {user.email}.{" "}
-          <Link href="/" className="underline">
+          <Link href="/recipes" className="underline">
             Back to the recipes
           </Link>
         </p>

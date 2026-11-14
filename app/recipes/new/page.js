@@ -8,7 +8,7 @@ export const metadata = { title: "Add a recipe" };
 export default function NewRecipePage() {
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pt-5">
-      <Link href="/" className="font-mono text-sm text-muted hover:underline">
+      <Link href="/recipes" className="font-mono text-sm text-muted hover:underline">
         ← All recipes
       </Link>
 

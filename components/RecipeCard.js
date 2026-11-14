@@ -5,7 +5,7 @@ import { hydration, showsHydration } from "@/lib/scaler";
 // How many of the three difficulty dots are filled in.
 const difficultyDots = { easy: 1, medium: 2, hard: 3 };
 
-// One recipe on the homepage, drawn as a ruled paper note taped to the page.
+// One recipe in a list, drawn as a ruled paper note taped to the page.
 // "position" is where the card sits in the list (0, 1, 2...); it decides
 // which way the note tilts.
 export default function RecipeCard({ recipe, position }) {
@@ -25,11 +25,12 @@ export default function RecipeCard({ recipe, position }) {
   return (
     // The whole note is the link. Backticks make a template string: ${...}
     // drops a value in, so recipe 3 links to "/recipes/3".
-    // On hover the note straightens (hover:rotate-0); transition-transform
-    // makes that a smooth turn. h-full makes notes in a row the same height.
+    // On hover (or keyboard focus) the note straightens and lifts a little;
+    // transition-[rotate,translate] makes that a smooth move. h-full makes
+    // notes in a row the same height.
     <Link
       href={`/recipes/${recipe.id}`}
-      className={`note note-ruled tape block h-full px-4 pb-3.5 pt-6.5 transition-transform hover:rotate-0 ${tilt}`}
+      className={`note note-ruled tape block h-full px-4 pb-3.5 pt-6.5 transition-[rotate,translate] duration-200 hover:-translate-y-1 hover:rotate-0 focus-visible:-translate-y-1 focus-visible:rotate-0 ${tilt}`}
     >
       {/* The rating (or "untested"), as a rubber stamp in the corner */}
       <RatingStamp rating={recipe.rating} tested={recipe.tested} className="absolute right-3 top-5.5" />

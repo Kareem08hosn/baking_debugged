@@ -149,6 +149,23 @@ class HydrationTests(unittest.TestCase):
         }
         self.assertEqual(scaler.hydration(recipe), 85)
 
+    def test_described_liquids_count_but_not_ones_on_the_outside(self):
+        recipe = {
+            "servings": 1,
+            "ingredients": [
+                {"name": "bread flour", "amount": 400, "unit": "g"},
+                {"name": "lukewarm water", "amount": 200, "unit": "g"},
+                {"name": "whole milk", "amount": 100, "unit": "g"},
+                {"name": "milk, for the tangzhong", "amount": 100, "unit": "g"},
+                # none of these three are liquid in the dough
+                {"name": "water, for the egg wash", "amount": 15, "unit": "g"},
+                {"name": "dry milk powder", "amount": 20, "unit": "g"},
+                {"name": "milk, for the icing", "amount": 30, "unit": "g"},
+            ],
+        }
+        # 200 + 87 + 87 = 374 g of water over 400 g of flour
+        self.assertEqual(scaler.hydration(recipe), 93.5)
+
     def test_no_liquid_is_zero(self):
         self.assertEqual(scaler.hydration(CAKE), 0)
 

@@ -1,5 +1,11 @@
 // "@/" is a shortcut for the project root folder (set up in jsconfig.json)
-import RecipeList from "@/components/RecipeList";
+import ChannelLinks from "@/components/home/ChannelLinks";
+import ChemistryTeaser from "@/components/home/ChemistryTeaser";
+import ComingSoon from "@/components/home/ComingSoon";
+import FeaturedRecipes from "@/components/home/FeaturedRecipes";
+import HomeHero from "@/components/home/HomeHero";
+import ScalerDemo from "@/components/home/ScalerDemo";
+import { pickDemoRecipe, pickFeatured } from "@/lib/featured";
 import { getRecipes } from "@/lib/recipes";
 
 // Next.js keeps a finished copy of this page and serves that to visitors, so
@@ -8,25 +14,26 @@ import { getRecipes } from "@/lib/recipes";
 // change in the database shows up within a minute.
 export const revalidate = 60;
 
+// The homepage. Each section is its own component in components/home/;
+// this file fetches the data once and hands each section what it needs.
 // "async" lets the page wait for the database before it is drawn.
 export default async function Home() {
   const recipes = await getRecipes();
+  // { lead, others } pulls those two values out of the object returned
+  const { lead, others } = pickFeatured(recipes);
+  const demoRecipe = pickDemoRecipe(recipes);
 
   return (
-    // className is JSX's word for the HTML "class" attribute.
-    // These are Tailwind classes: each one applies a single CSS rule.
-    <main className="mx-auto w-full max-w-5xl px-4 pt-5">
-      {/* "highlight" is one of our own classes, defined in app/globals.css */}
-      <h1 className="font-mono text-[2.5rem] font-bold leading-tight sm:text-[3.25rem]">
-        <span className="highlight">Recipes</span>
-      </h1>
-      <p className="mb-4 mt-1.5 max-w-xl text-muted">
-        Notes from the bench. Every bake measured in grams, with what worked
-        and what didn’t.
-      </p>
-
-      {/* Hand the data to RecipeList as a "prop" (like a function argument) */}
-      <RecipeList recipes={recipes} />
+    <main>
+      <HomeHero recipe={lead} />
+      <FeaturedRecipes recipes={others} total={recipes.length} />
+      <ChemistryTeaser />
+      {/* && means "only draw this if the left side exists" */}
+      {demoRecipe && <ScalerDemo recipe={demoRecipe} />}
+      <section className="page grid gap-16 pb-6 md:grid-cols-2">
+        <ChannelLinks />
+        <ComingSoon />
+      </section>
     </main>
   );
 }

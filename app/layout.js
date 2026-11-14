@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Mynerve } from "next/font/google";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/themeSettings";
@@ -11,6 +11,13 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+// Handwriting, for margin notes only. It comes in a single weight.
+const mynerve = Mynerve({
+  variable: "--font-mynerve",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -43,7 +50,7 @@ export default function RootLayout({ children }) {
       lang="en"
       data-theme={DEFAULT_THEME}
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${mynerve.variable} h-full antialiased`}
     >
       <head>
         {/* dangerouslySetInnerHTML puts raw text inside the tag. The name is

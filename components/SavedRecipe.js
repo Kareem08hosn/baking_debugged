@@ -37,7 +37,7 @@ export default function SavedRecipe({ id }) {
     // confirm() shows the browser's OK / Cancel box and returns true for OK.
     if (window.confirm(`Delete "${recipe.name}"? This can't be undone.`)) {
       deleteSavedRecipe(recipe.id);
-      router.push("/");
+      router.push("/recipes");
     }
   }
 

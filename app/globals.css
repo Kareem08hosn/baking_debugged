@@ -20,8 +20,10 @@
   --foreground: #14342b; /* ink: the logo's dark green */
   --muted: #4b6259; /* secondary text */
   --line: #d9cfa6; /* ruled lines and light borders */
-  --highlight: #f6e7b4; /* highlighter pen and tape: the logo's cream */
-  --shadow: rgb(20 52 43 / 0.14); /* the shadow under a note */
+  --highlight: #f4d96b; /* highlighter pen: a butter yellow you can see */
+  --tape: #f1dc9a; /* masking tape */
+  --grid: rgb(20 52 43 / 0.11); /* the squares on graph paper */
+  --shadow: rgb(20 52 43 / 0.18); /* the shadow under a note */
 }
 
 /* The dark theme. [data-theme="dark"] means "when <html> has that attribute". */
@@ -33,8 +35,10 @@
   --foreground: #f6e7b4; /* the logo's butter cream */
   --muted: #b9b48f;
   --line: #34604f;
-  --highlight: #2a5a49;
-  --shadow: rgb(0 0 0 / 0.35);
+  --highlight: #33705a;
+  --tape: rgb(246 231 180 / 0.22);
+  --grid: rgb(246 231 180 / 0.09);
+  --shadow: rgb(0 0 0 / 0.42);
 }
 
 /* "System" follows the device: the same dark colours, but only when the
@@ -49,15 +53,19 @@
     --foreground: #f6e7b4;
     --muted: #b9b48f;
     --line: #34604f;
-    --highlight: #2a5a49;
-    --shadow: rgb(0 0 0 / 0.35);
+    --highlight: #33705a;
+    --tape: rgb(246 231 180 / 0.22);
+    --grid: rgb(246 231 180 / 0.09);
+    --shadow: rgb(0 0 0 / 0.42);
   }
 }
 
 /* Registers the variables with Tailwind, which creates classes from them:
    --color-surface gives bg-surface, --color-muted gives text-muted,
-   --color-line gives border-line, and so on. The two fonts are loaded in
-   layout.js: Geist for body text, Geist Mono for headings and numbers. */
+   --color-line gives border-line, and so on. The three fonts are loaded in
+   layout.js: Geist for body text, Geist Mono for headings and numbers, and
+   Mynerve (handwriting) for margin notes only. The names after it are
+   fallbacks in case the font hasn't loaded. */
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
@@ -65,8 +73,10 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-highlight: var(--highlight);
+  --color-tape: var(--tape);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-hand: var(--font-mynerve), "Bradley Hand", "Segoe Print", cursive;
 }
 
 body {
@@ -88,14 +98,80 @@ body {
    them: class="field w-24" makes a narrow field.
 --------------------------------------------------------------------------- */
 @layer components {
-  /* A highlighter-pen swipe behind text: the bottom 40% of each line is
-     coloured. Used on page titles and the current nav link. */
+  /* The width every page's content sits in: centred, with a 16px gutter. */
+  .page {
+    width: 100%;
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  /* Section headings: big, tight, monospace. */
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: clamp(1.9rem, 7vw, 3rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.045em;
+    text-wrap: balance; /* evens out the lines when a heading wraps */
+  }
+
+  /* A highlighter-pen swipe behind text: a band across the lower part of
+     each line. Used on page titles and the current nav link. */
   .highlight {
-    background-image: linear-gradient(transparent 58%, var(--highlight) 58%);
-    padding: 0 0.15em;
+    background-image: linear-gradient(var(--highlight), var(--highlight));
+    background-repeat: no-repeat;
+    background-position: 0 82%;
+    background-size: 100% 36%;
+    padding: 0 0.12em;
+    margin: 0 -0.12em; /* so the text itself doesn't shift sideways */
     /* If the text wraps, give every line its own swipe */
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
+  }
+
+  /* The swipe is drawn in from the left when the page loads (homepage title
+     only). "both" holds the first frame until the animation starts. */
+  .highlight-draw {
+    animation: swipe 0.8s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  /* Handwritten margin notes. Decoration only: never put anything a visitor
+     NEEDS in this font, it is harder to read than the others. */
+  .hand {
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    line-height: 1.15;
+    text-wrap: balance; /* no single word left alone on the last line */
+  }
+
+  /* A hand-drawn arrow (components/HandArrow.js). The line draws itself
+     once: the dash is as long as the whole path, and the animation slides
+     it into view. */
+  .arrow {
+    flex: none;
+    width: 58px;
+    height: 46px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .arrow path {
+    stroke-dasharray: 140;
+    animation: draw 0.7s 0.9s ease-out both;
+  }
+
+  /* A link that stands alone under a section ("See all 98 recipes"). */
+  .link {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+  .link:hover {
+    text-decoration-thickness: 2.5px;
   }
 
   /* A piece of paper lying on the page. */
@@ -104,7 +180,44 @@ body {
     background-color: var(--surface);
     box-shadow:
       0 1px 0 var(--line),
-      0 10px 22px -10px var(--shadow);
+      0 16px 26px -16px var(--shadow);
+  }
+
+  /* Graph paper: two sets of thin lines, one across and one down, repeated
+     every 20px. Only for single sheets and diagrams, never the whole page. */
+  .graph {
+    background-color: var(--surface);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* A big sheet held down by a strip of tape across each top corner. */
+  .sheet {
+    position: relative;
+    box-shadow:
+      0 1px 0 var(--line),
+      0 18px 30px -18px var(--shadow);
+  }
+  .sheet::before,
+  .sheet::after {
+    content: "";
+    position: absolute;
+    top: -9px;
+    width: 78px;
+    height: 24px;
+    background-color: var(--tape);
+    opacity: 0.92;
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+  .sheet::before {
+    left: -18px;
+    transform: rotate(-38deg);
+  }
+  .sheet::after {
+    right: -18px;
+    transform: rotate(36deg);
   }
 
   /* Ruled lines, one every 28px. Text inside should use a 28px line height
@@ -124,12 +237,12 @@ body {
     position: absolute;
     top: -10px;
     left: 50%;
-    width: 84px;
-    height: 22px;
-    margin-left: -42px;
-    background-color: var(--highlight);
-    opacity: 0.9;
-    transform: rotate(-2deg);
+    width: 92px;
+    height: 24px;
+    margin-left: -46px;
+    background-color: var(--tape);
+    opacity: 0.92;
+    transform: rotate(-2.5deg);
     box-shadow: 0 1px 2px var(--shadow);
   }
 
@@ -161,6 +274,82 @@ body {
     color: var(--muted);
     border-color: var(--muted);
     font-size: 9px;
+  }
+
+  /* A rectangular rubber stamp with a double border: "CHEMISTRY NOTE #01".
+     The second border is an outline drawn 2px outside the first. */
+  .stamp-label {
+    display: inline-block;
+    padding: 0.5em 0.7em;
+    border: 2px solid currentColor;
+    border-radius: 4px;
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: rotate(-5deg);
+    opacity: 0.88;
+  }
+
+  /* A strip of masking tape with a word written on it (the channel links).
+     The torn ends are cut with clip-path on a ::before layer, not on the
+     link itself, because clip-path would also cut off the focus outline. */
+  .tape-strip {
+    position: relative;
+    isolation: isolate; /* keeps the z-index below inside this element */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.1rem 1rem;
+    padding: 0.75rem 1.3rem;
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+  .tape-strip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--tape);
+    clip-path: polygon(
+      0 0, 100% 0, calc(100% - 6px) 25%, 100% 50%, calc(100% - 6px) 75%,
+      100% 100%, 0 100%, 6px 75%, 0 50%, 6px 25%
+    );
+  }
+  .tape-strip:hover {
+    transform: rotate(0deg) translateX(4px);
+  }
+
+  /* A pencil outline for something that doesn't exist yet. */
+  .sketch-card {
+    border: 1.5px dashed var(--muted);
+    border-radius: 3px;
+    padding: 0.9rem 1rem;
+  }
+
+  /* The dotted line between an ingredient and its amount. */
+  .leader {
+    flex: 1;
+    border-bottom: 1.5px dotted var(--muted);
+    transform: translateY(-5px);
+  }
+
+  /* An amount that has just changed flashes highlighter yellow once. */
+  .tick {
+    animation: tick 0.4s ease-out;
+  }
+
+  /* The homepage's lead card is dropped onto the page when it loads. */
+  .drop-in {
+    animation: drop 0.6s 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
   }
 
   /* Small capital-letter labels: "NO. 03 · BREAD", field names, table heads */
@@ -217,17 +406,60 @@ body {
     font-family: var(--font-mono);
     cursor: pointer;
   }
+  .btn,
+  .btn-paper {
+    min-height: 46px; /* a comfortable size for thumbs */
+    padding: 0.6rem 1.3rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
   .btn {
     background-color: var(--foreground);
     color: var(--background);
-    padding: 0.625rem 1.25rem;
+  }
+  /* The second-choice button next to a .btn: same size, paper coloured. */
+  .btn-paper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--foreground);
+    border-radius: 999px;
+    background-color: var(--surface);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    cursor: pointer;
+  }
+  /* Round − and + buttons */
+  .btn-round {
+    display: grid;
+    place-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--foreground);
+    border-radius: 50%;
+    background-color: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
     font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .btn-round:active {
+    transform: scale(0.92);
+  }
+  .btn-round:disabled {
+    opacity: 0.45;
+    cursor: default;
   }
   .btn-quiet,
   .chip {
     background-color: var(--surface);
     color: var(--foreground);
-    padding: 0.3125rem 0.75rem;
+    min-height: 2.25rem;
+    padding: 0.3125rem 0.8rem;
     font-size: 0.8125rem;
   }
   /* aria-pressed="true" is how a toggle button says "I am on" */
@@ -235,16 +467,23 @@ body {
     background-color: var(--foreground);
     color: var(--background);
   }
-  .btn:hover,
   .btn-quiet:hover,
-  .chip:hover {
+  .chip:hover,
+  .btn-round:hover {
     box-shadow: 2px 2px 0 var(--line);
+  }
+  /* The big buttons lift and tip slightly, like picking up a sticker. */
+  .btn:hover,
+  .btn-paper:hover {
+    transform: translate(-1px, -2px) rotate(-1deg);
+    box-shadow: 3px 4px 0 var(--line);
   }
   .btn:disabled,
   .btn-quiet:disabled {
     opacity: 0.45;
     cursor: default;
     box-shadow: none;
+    transform: none;
   }
 
   /* A message that needs attention (errors) */
@@ -261,4 +500,48 @@ body {
 :focus-visible {
   outline: 2px solid var(--foreground);
   outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Movement
+
+   @keyframes describes an animation: where it starts ("from") and, if given,
+   where it ends ("to"). With no "to", it ends at the element's normal style.
+--------------------------------------------------------------------------- */
+@keyframes swipe {
+  from {
+    background-size: 0 36%;
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 140;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes drop {
+  from {
+    transform: translateY(-22px) rotate(-6deg) scale(1.04);
+  }
+}
+@keyframes tick {
+  from {
+    background-color: var(--highlight);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+/* Some people get dizzy or distracted by movement and switch it off in their
+   device settings. This turns every animation and transition off for them. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

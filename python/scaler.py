@@ -37,6 +37,13 @@ WATER_FRACTION = {
     "yogurt": 0.85,
 }
 
+# Dried and concentrated milks are not liquid, so they add no water.
+NOT_LIQUID = ["powder", "dry", "condensed", "evaporated"]
+
+# Words in an ingredient's note that mean it goes ON the bake, not into the
+# dough: "water, for the egg wash", "milk, for the icing".
+NOT_IN_DOUGH = ["wash", "glaz", "icing", "frosting", "brushing"]
+
 # A sourdough starter is flour and water mixed together. This assumes a
 # "100% hydration" starter: equal weights of each, the most common kind.
 STARTER_FLOUR_FRACTION = 0.5
@@ -190,6 +197,27 @@ def bakers_percentages(recipe):
     return percentages
 
 
+def water_fraction(ingredient):
+    """How much of this ingredient's weight counts as water, from 0 to 1.
+
+    Recipes rarely say just "water": they say "lukewarm water" or "whole
+    milk". So the liquid is found from the LAST word of the name, after
+    dropping any note that follows a comma: "milk, for the tangzhong" -> "milk".
+    """
+    # partition(",") splits at the first comma: (before, ",", after)
+    main, _, note = ingredient["name"].lower().partition(",")
+
+    if any(word in note for word in NOT_IN_DOUGH):
+        return 0
+    if any(word in main for word in NOT_LIQUID):
+        return 0
+
+    # "lukewarm water" -> ["lukewarm", "water"] -> "water"
+    last_word = main.strip().split(" ")[-1]
+    # .get(word, 0) looks the word up and gives 0 if it isn't there.
+    return WATER_FRACTION.get(last_word, 0)
+
+
 def hydration(recipe):
     """Water as a percentage of flour: the main number for bread dough.
 
@@ -199,7 +227,8 @@ def hydration(recipe):
     What is counted:
       - water and milk, by how much of each is water (WATER_FRACTION)
       - sourdough starter, split into its flour and its water
-    What is not counted: eggs (measured by count, so no weight) and butter.
+    What is not counted: eggs (measured by count, so no weight), butter, and
+    liquid that goes on the outside (an egg wash, a glaze).
 
     Returns None if the recipe has no flour.
     """
@@ -209,7 +238,6 @@ def hydration(recipe):
         if ingredient["unit"] != "g":
             continue
         amount = ingredient["amount"]
-        name = ingredient["name"].lower()
 
         if is_starter(ingredient):
             flour += amount * STARTER_FLOUR_FRACTION
@@ -217,8 +245,7 @@ def hydration(recipe):
         elif is_flour(ingredient):
             flour += amount
         else:
-            # .get(name, 0) looks the name up and gives 0 if it isn't there.
-            water += amount * WATER_FRACTION.get(name, 0)
+            water += amount * water_fraction(ingredient)
 
     if flour == 0:
         return None
