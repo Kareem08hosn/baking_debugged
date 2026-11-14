@@ -1,32 +1,56 @@
 @import "tailwindcss";
 
-/* Colours are CSS variables so light and dark mode can swap them in one place. */
+/* Brand colours come from the logo (public/brand/): butter cream and dark
+   green. They are CSS variables so the theme can swap them in one place.
+   Light theme (the default): cream page, green ink.
+   Dark theme: green page, cream ink.
+   The theme is chosen by the data-theme attribute on <html>, which is set by
+   the toggle in the header (see lib/theme.js). */
 :root {
-  /* Tells the browser both modes are supported, so built-in controls
-     (dropdowns, scrollbars) switch colours along with the page. */
-  color-scheme: light dark;
+  /* Tells the browser which colours to use for its own controls
+     (dropdown lists, scrollbars). */
+  color-scheme: light;
 
-  --background: #ffffff;
-  --foreground: #171717;
-  --muted: #6b7280; /* secondary text */
-  --line: #d4d4d8; /* borders */
+  --background: #faf4df; /* the page: a paler tint of the logo cream */
+  --surface: #fffdf3; /* cards and form fields, slightly lighter than the page */
+  --foreground: #14342b; /* text and details: the logo's dark green */
+  --muted: #4b6259; /* secondary text */
+  --line: #d9cfa6; /* borders */
 }
 
-/* Applies when the visitor's device is set to dark mode. */
+/* The dark theme. [data-theme="dark"] means "when <html> has that attribute". */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #14342b; /* the logo's dark green */
+  --surface: #1b4236;
+  --foreground: #f6e7b4; /* the logo's butter cream */
+  --muted: #b9b48f;
+  --line: #34604f;
+}
+
+/* "System" follows the device: the same dark colours, but only when the
+   device itself is set to dark mode. CSS has no way to reuse the block
+   above here, so the values are repeated. Keep the two in sync. */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --muted: #a1a1aa;
-    --line: #3f3f46;
+  :root[data-theme="system"] {
+    color-scheme: dark;
+
+    --background: #14342b;
+    --surface: #1b4236;
+    --foreground: #f6e7b4;
+    --muted: #b9b48f;
+    --line: #34604f;
   }
 }
 
 /* Registers the variables with Tailwind, which creates classes from them:
-   --color-muted gives text-muted, --color-line gives border-line, and
-   --font-sans makes the Geist font (loaded in layout.js) the default. */
+   --color-surface gives bg-surface, --color-muted gives text-muted,
+   --color-line gives border-line, and so on. The two fonts are loaded in
+   layout.js: Geist for body text, Geist Mono for headings and numbers. */
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-line: var(--line);
@@ -35,6 +59,6 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
 }
