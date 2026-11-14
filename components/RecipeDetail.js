@@ -3,13 +3,13 @@
 
 import { useState } from "react";
 import { getPanById, pans } from "@/lib/pans";
-import { formatAmount } from "@/lib/recipes";
 import {
   bakersPercentages,
   hydration,
   panScaleFactor,
   scaleRecipe,
 } from "@/lib/scaler";
+import { UNIT_SYSTEMS, formatAmount, hasVolume } from "@/lib/units";
 
 // One box in the row of key numbers at the top of a recipe.
 function Stat({ label, value }) {
@@ -49,6 +49,9 @@ export default function RecipeDetail({ recipe }) {
   // are worked out from the original amounts to avoid rounding drift.
   const percentages = bakersPercentages(recipe);
   const recipeHydration = hydration(recipe);
+
+  // Which units the Amount column shows: "grams", "us" or "ml".
+  const [unitSystem, setUnitSystem] = useState("grams");
 
   // Typing a number of servings: that amount no longer matches a pan, unless
   // it is the original amount.
@@ -158,6 +161,21 @@ export default function RecipeDetail({ recipe }) {
             </label>
           )}
 
+          <label className="mb-3 flex items-center gap-2 font-mono text-sm">
+            Units
+            <select
+              className="min-w-0 flex-1 rounded border border-line bg-surface p-1"
+              value={unitSystem}
+              onChange={(event) => setUnitSystem(event.target.value)}
+            >
+              {UNIT_SYSTEMS.map((system) => (
+                <option key={system.id} value={system.id}>
+                  {system.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
           {/* A real <table>, so screen readers can read it as rows and columns */}
           <table className="w-full rounded-lg border border-line bg-surface">
             <thead className="font-mono text-xs uppercase tracking-wide text-muted">
@@ -179,7 +197,7 @@ export default function RecipeDetail({ recipe }) {
                 <tr key={index} className="border-b border-line last:border-b-0">
                   <td className="px-4 py-2">{ingredient.name}</td>
                   <td className="whitespace-nowrap px-2 py-2 text-right font-mono">
-                    {formatAmount(ingredient)}
+                    {formatAmount(ingredient, unitSystem)}
                   </td>
                   {percentages.length > 0 && (
                     <td className="px-4 py-2 text-right font-mono text-muted">
@@ -201,6 +219,18 @@ export default function RecipeDetail({ recipe }) {
           {percentages.length > 0 && (
             <p className="mt-1 text-sm text-muted">
               Baker’s % is each ingredient’s weight compared with the flour.
+            </p>
+          )}
+          {/* Only shown for cups or millilitres */}
+          {unitSystem !== "grams" && (
+            <p className="mt-1 text-sm text-muted">
+              Volumes are approximate: a cup of flour changes with how it is
+              scooped. Weigh in grams when it matters.
+              {/* some() is true if at least one item passes the test */}
+              {shown.ingredients.some(
+                (ingredient) =>
+                  ingredient.unit === "g" && !hasVolume(ingredient)
+              ) && " Ingredients without a known density stay in grams."}
             </p>
           )}
           {isScaled && (
