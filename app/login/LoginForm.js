@@ -14,11 +14,17 @@ export default function LoginForm() {
 
   if (state.status === "sent") {
     return (
-      <div className="note tape px-4 pb-4 pt-6">
-        <p className="font-mono font-bold">Check your email</p>
-        <p className="mt-1 text-muted">
-          A sign-in link is on its way to {state.email}. It works once and
-          expires after an hour. Open it in this browser.
+      // role="status" makes screen readers announce this when it appears
+      <div role="status" className="note tape px-5 pb-6 pt-8">
+        {/* An envelope drawn in pen */}
+        <svg viewBox="0 0 64 44" className="h-11 w-16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="58" height="38" rx="3" />
+          <path d="M4 5 L32 26 L60 5" />
+        </svg>
+        <p className="mt-4 font-mono text-lg font-bold">Check your email</p>
+        <p className="mt-1.5 break-words">
+          A sign-in link is on its way to <b>{state.email}</b>. It works once
+          and expires after an hour. Open it in this browser.
         </p>
       </div>
     );
@@ -27,17 +33,21 @@ export default function LoginForm() {
   return (
     // action={formAction}: the browser sends the form's fields to the server
     // action. No onSubmit or preventDefault is needed.
-    <form action={formAction} className="note tape space-y-4 px-4 pb-5 pt-7">
-      <label className="label block">
-        Email
+    <form action={formAction} className="note tape grid gap-5 px-5 pb-6 pt-8">
+      <div>
+        <label htmlFor="login-email" className="label block">
+          Email
+        </label>
         <input
-          className="field mt-1"
+          id="login-email"
+          className="field mt-1.5"
           type="email"
           name="email"
           autoComplete="email"
+          placeholder="you@example.com"
           required
         />
-      </label>
+      </div>
 
       {/* role="alert" makes screen readers announce the message */}
       {state.status === "error" && (
@@ -49,7 +59,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="btn"
+        className="btn justify-self-start"
       >
         {isPending ? "Sending…" : "Email me a sign-in link"}
       </button>

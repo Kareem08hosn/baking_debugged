@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AccountLink from "@/components/AccountLink";
@@ -24,12 +24,16 @@ function isCurrent(pathname, href) {
 export default function SiteNav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  // A ref points at a real element on the page: here the menu button, so
+  // focus can be moved back to it.
+  const buttonRef = useRef(null);
 
   // Pressing Escape closes the menu, as people expect from anything that
-  // opens.
+  // opens, and puts keyboard focus back on the button that opened it.
   function handleKeyDown(event) {
-    if (event.key === "Escape") {
+    if (event.key === "Escape" && isOpen) {
       setIsOpen(false);
+      buttonRef.current.focus();
     }
   }
 
@@ -39,6 +43,7 @@ export default function SiteNav() {
           width up). aria-expanded tells screen readers whether the menu is
           open; aria-controls says which element it opens. */}
       <button
+        ref={buttonRef}
         type="button"
         className="grid size-11 place-content-center rounded-full border-[1.5px] border-foreground md:hidden"
         aria-expanded={isOpen}

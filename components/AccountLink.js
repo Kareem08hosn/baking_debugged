@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 // The sign-in part of the header: a "Sign in" link, or the visitor's email
@@ -14,6 +14,7 @@ import { createClient } from "@/lib/supabase/client";
 // once and reused.
 export default function AccountLink() {
   const router = useRouter();
+  const pathname = usePathname();
   // undefined = not known yet, null = signed out, text = the signed-in email
   const [email, setEmail] = useState(undefined);
 
@@ -50,7 +51,12 @@ export default function AccountLink() {
 
   if (email === null) {
     return (
-      <Link href="/login" className="hover:underline">
+      // Marked like the other nav links when you're on the sign-in page
+      <Link
+        href="/login"
+        aria-current={pathname === "/login" ? "page" : undefined}
+        className={pathname === "/login" ? "highlight" : "hover:underline"}
+      >
         Sign in
       </Link>
     );

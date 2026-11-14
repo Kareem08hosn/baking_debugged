@@ -45,7 +45,9 @@ export default function RecipeCard({ recipe, position }) {
         {recipe.name}
       </h2>
       <p className="font-mono text-sm leading-7">
-        bake {recipe.bakeTime} min · prep {recipe.prepTime} min
+        {/* Some recipes (a pie crust, a no-bake bar) have no bake time */}
+        {recipe.bakeTime > 0 ? `bake ${recipe.bakeTime} min` : "no bake"} ·
+        prep {recipe.prepTime} min
       </p>
       <p className="font-mono text-sm leading-7">
         <span className="tracking-[2px]" aria-hidden="true">

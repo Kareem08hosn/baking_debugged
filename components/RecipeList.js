@@ -1,9 +1,10 @@
 // "use client" tells Next.js to run this component in the browser too.
-// We need that because it reacts to the user (the sort dropdown).
+// We need that because it reacts to the user (search, tabs, dropdowns).
 "use client";
 
 import { useState } from "react";
 import RecipeCard from "@/components/RecipeCard";
+import { useBookmarks } from "@/lib/bookmarks";
 import { useSavedRecipes } from "@/lib/savedRecipes";
 
 // "easy" < "medium" < "hard" isn't alphabetical, so give each one a number.
@@ -55,6 +56,24 @@ function matchesSearch(recipe, searchText) {
   );
 }
 
+// A magnifying glass drawn as a circle and a line.
+function SearchIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M15.5 15.5 L21 21" />
+    </svg>
+  );
+}
+
 // { recipes: builtInRecipes } pulls the "recipes" prop out of what page.js
 // passed in and renames it, because the full list is built just below.
 export default function RecipeList({ recipes: builtInRecipes }) {
@@ -63,6 +82,8 @@ export default function RecipeList({ recipes: builtInRecipes }) {
   const savedRecipes = useSavedRecipes() ?? [];
   // [...a, ...b] makes one new array holding everything from both.
   const recipes = [...builtInRecipes, ...savedRecipes];
+  // Ids of the recipes saved with the Save button (lib/bookmarks.js)
+  const bookmarks = useBookmarks() ?? [];
 
   // State = a value React remembers between redraws.
   // sortBy is the current value, setSortBy changes it and redraws the list.
@@ -82,11 +103,37 @@ export default function RecipeList({ recipes: builtInRecipes }) {
   // and we want one flat list of them.
   const diets = uniqueValues(recipes.flatMap((recipe) => recipe.diet));
 
+  // How many recipes each tab holds, shown as a small number on the tab.
+  // filter(...).length counts the items that pass the test.
+  function countIn(value) {
+    if (value === "all") {
+      return recipes.length;
+    }
+    return recipes.filter((recipe) => inTab(recipe, value)).length;
+  }
+
+  // Is this recipe in this tab? "saved" is a special tab for bookmarks;
+  // every other tab is a category.
+  function inTab(recipe, value) {
+    if (value === "all") {
+      return true;
+    }
+    if (value === "saved") {
+      return bookmarks.includes(recipe.id);
+    }
+    return recipe.category === value;
+  }
+
+  // The "saved" tab only appears once something is saved (or while it is
+  // the chosen tab, so it doesn't vanish under you after un-saving).
+  const showSavedTab = bookmarks.length > 0 || category === "saved";
+  const tabs = ["all", ...(showSavedTab ? ["saved"] : []), ...categories];
+
   // filter() keeps only the recipes where the function returns true.
-  // A recipe must pass all three checks (&& means AND, || means OR).
+  // A recipe must pass every check (&& means AND, || means OR).
   const filteredRecipes = recipes.filter(
     (recipe) =>
-      (category === "all" || recipe.category === category) &&
+      inTab(recipe, category) &&
       (difficulty === "all" || recipe.difficulty === difficulty) &&
       (diet === "all" || recipe.diet.includes(diet)) &&
       matchesSearch(recipe, searchText)
@@ -100,62 +147,97 @@ export default function RecipeList({ recipes: builtInRecipes }) {
   // slice(0, n) takes the first n items: only these are drawn.
   const visibleRecipes = sortedRecipes.slice(0, visibleCount);
 
+  // True when anything narrows the list, so "Clear filters" is worth showing.
+  const isFiltered =
+    category !== "all" ||
+    difficulty !== "all" ||
+    diet !== "all" ||
+    searchText.trim() !== "";
+
+  // Any change to what is shown starts the list from the top again.
+  // This takes a "setter" (like setCategory) and returns a new function
+  // that calls it and resets the count: a function that makes functions.
+  function changeFilter(setter) {
+    return (value) => {
+      setter(value);
+      setVisibleCount(PAGE_SIZE);
+    };
+  }
+  const chooseCategory = changeFilter(setCategory);
+  const chooseDifficulty = changeFilter(setDifficulty);
+  const chooseDiet = changeFilter(setDiet);
+  const changeSearch = changeFilter(setSearchText);
+
+  function clearFilters() {
+    chooseCategory("all");
+    chooseDifficulty("all");
+    chooseDiet("all");
+    changeSearch("");
+  }
+
   return (
     <div>
       {/* type="search" gives the box a clear button and the right phone
-          keyboard. The label is for screen readers only (sr-only). */}
-      <label className="mb-3 block">
+          keyboard. The label is for screen readers only (sr-only); the
+          placeholder alone isn't enough, it disappears once you type. */}
+      <label className="relative mb-5 block max-w-xl">
         <span className="sr-only">Search recipes</span>
+        <SearchIcon />
         <input
-          className="field"
+          className="field pl-10"
           type="search"
-          placeholder="Search by name or ingredient…"
+          placeholder="Search by name or ingredient"
           value={searchText}
-          onChange={(event) => setSearchText(event.target.value)}
+          onChange={(event) => changeSearch(event.target.value)}
         />
       </label>
 
-      {/* Category filter: a row of chips. On a phone the row scrolls
-          sideways instead of wrapping (overflow-x-auto), and the negative
-          margin lets it run to the screen edge. */}
+      {/* Category tabs. When they don't fit, the row scrolls sideways
+          instead of wrapping (overflow-x-auto). On phones the negative
+          margin lets it run to the screen edge. Below "lg" the right edge
+          fades out (a mask), a hint that there are more tabs to scroll to.
+          pt-1 leaves room for a tab lifting on hover. */}
       <div
         role="group"
         aria-label="Category"
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2.5 pt-0.5 [scrollbar-width:none]"
+        className="tab-row -mx-4 overflow-x-auto px-4 pt-1 [scrollbar-width:none] max-lg:[mask-image:linear-gradient(to_right,black_85%,transparent)] sm:mx-0 sm:px-0"
       >
-        {/* "all" first, then one chip per category found in the data */}
-        {["all", ...categories].map((value) => (
+        {/* "all" first, then "saved" if there is one, then one tab per
+            category found in the data */}
+        {tabs.map((value) => (
           <button
             key={value}
             type="button"
-            // flex-none stops chips being squashed to fit the row
-            className="chip flex-none"
+            className="tab"
             // A toggle button says whether it is on with aria-pressed
             aria-pressed={category === value}
-            onClick={() => setCategory(value)}
+            onClick={() => chooseCategory(value)}
           >
             {value}
+            <small>{countIn(value)}</small>
           </button>
         ))}
       </div>
 
-      {/* The count on the left, the other three controls on the right */}
-      <div className="mb-6 mt-1 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 font-mono text-xs text-muted">
+      {/* The filter strip, on the "page" the tabs belong to. The count on
+          the left, the other controls on the right. */}
+      <div className="note mb-9 flex flex-wrap items-center justify-between gap-x-5 gap-y-2.5 px-4 py-3 font-mono text-[0.8125rem]">
         {/* aria-live makes screen readers announce the new count when a
             filter changes */}
         <p aria-live="polite">
-          {sortedRecipes.length} of {recipes.length} recipes
+          <b className="tabular-nums">{sortedRecipes.length}</b> of{" "}
+          {recipes.length} recipes
         </p>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-2">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <label>
-            level:{" "}
+            <span className="text-muted">level </span>
             <select
               className="field-inline"
               value={difficulty}
-              onChange={(event) => setDifficulty(event.target.value)}
+              onChange={(event) => chooseDifficulty(event.target.value)}
             >
-              <option value="all">all</option>
+              <option value="all">any</option>
               <option value="easy">easy</option>
               <option value="medium">medium</option>
               <option value="hard">hard</option>
@@ -163,13 +245,13 @@ export default function RecipeList({ recipes: builtInRecipes }) {
           </label>
 
           <label>
-            diet:{" "}
+            <span className="text-muted">diet </span>
             <select
               className="field-inline"
               value={diet}
-              onChange={(event) => setDiet(event.target.value)}
+              onChange={(event) => chooseDiet(event.target.value)}
             >
-              <option value="all">all</option>
+              <option value="all">any</option>
               {diets.map((value) => (
                 <option key={value} value={value}>
                   {value}
@@ -179,7 +261,7 @@ export default function RecipeList({ recipes: builtInRecipes }) {
           </label>
 
           <label>
-            sort:{" "}
+            <span className="text-muted">sort by </span>
             <select
               className="field-inline"
               value={sortBy}
@@ -192,18 +274,35 @@ export default function RecipeList({ recipes: builtInRecipes }) {
               <option value="rating">rating</option>
             </select>
           </label>
+
+          {isFiltered && (
+            <button type="button" className="underline underline-offset-4" onClick={clearFilters}>
+              Clear filters
+            </button>
+          )}
         </div>
       </div>
 
-      {/* && means "only show this if the left side is true" */}
+      {/* Empty state: say what happened and offer the way out. */}
       {sortedRecipes.length === 0 && (
-        <p className="font-mono">Nothing matches those filters.</p>
+        <div className="note note-ruled tape mx-auto max-w-md -rotate-1 px-5 pb-5 pt-8">
+          <p className="font-mono text-lg font-bold leading-7">
+            No recipes match
+          </p>
+          <p className="leading-7">
+            Nothing fits{searchText.trim() && <> “{searchText.trim()}”</>} with
+            these filters. Try fewer filters or a shorter search.
+          </p>
+          <button type="button" className="btn-quiet mt-3" onClick={clearFilters}>
+            Clear filters
+          </button>
+        </div>
       )}
 
       {/* Recipe notes: 1 column on phones, 2 from "sm", 3 from "lg".
           Tailwind is mobile-first: plain classes apply everywhere, and a
           prefix like sm: means "from this screen width upwards". */}
-      <ul className="grid gap-x-5 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
         {/* .map() runs once per recipe and turns each one into an <li>.
             It also hands over each item's position in the list (index). */}
         {visibleRecipes.map((recipe, index) => (
@@ -216,10 +315,10 @@ export default function RecipeList({ recipes: builtInRecipes }) {
 
       {/* Only offered while some matching recipes are still hidden */}
       {visibleCount < sortedRecipes.length && (
-        <div className="mt-8 text-center">
+        <div className="mt-10 text-center">
           <button
             type="button"
-            className="btn-quiet"
+            className="btn-paper"
             onClick={() => setVisibleCount(visibleCount + PAGE_SIZE)}
           >
             Show more ({sortedRecipes.length - visibleCount} left)

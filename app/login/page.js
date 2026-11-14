@@ -11,36 +11,43 @@ export default async function LoginPage({ searchParams }) {
   const user = await getUser();
 
   return (
-    <main className="mx-auto w-full max-w-md px-4 pt-8">
-      <h1 className="font-mono text-[2rem] font-bold leading-tight sm:text-[2.75rem]">
-        <span className="highlight">Sign in</span>
-      </h1>
-
-      {user ? (
-        <p className="mt-4">
-          You are signed in as {user.email}.{" "}
-          <Link href="/recipes" className="underline">
-            Back to the recipes
-          </Link>
+    // One column on phones; from "md" up the explanation sits beside the form.
+    <main className="page grid gap-10 pt-8 md:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] md:items-start md:gap-14 md:pt-12">
+      <div>
+        <h1 className="font-mono text-[clamp(2.4rem,10vw,4rem)] font-extrabold leading-none tracking-[-0.05em]">
+          <span className="highlight">Sign in</span>
+        </h1>
+        <p className="mt-5 max-w-md text-lg">
+          No password needed. Enter your email and you’ll get a link that
+          signs you in. New here? The same link creates your account.
         </p>
-      ) : (
-        <>
-          <p className="mb-8 mt-2 text-muted">
-            No password needed. Enter your email and we’ll send you a link
-            that signs you in. New here? The same link creates your account.
-          </p>
+        <p className="hand mt-5 max-w-sm -rotate-1 text-muted">
+          coming soon: your saved recipes, notes and bake log, on any device
+        </p>
+      </div>
 
-          {/* Shown when a sign-in link didn't work (see app/auth/confirm) */}
-          {error === "link" && (
-            <p role="alert" className="alert mb-4">
-              That sign-in link has expired or was already used. Request a new
-              one below.
-            </p>
-          )}
-
-          <LoginForm />
-        </>
-      )}
+      <div>
+        {user ? (
+          <div className="note tape px-5 pb-5 pt-8">
+            <p className="font-mono text-lg font-bold">You’re signed in</p>
+            <p className="mt-1.5 break-words text-muted">as {user.email}</p>
+            <Link href="/recipes" className="btn mt-5">
+              Browse the recipes
+            </Link>
+          </div>
+        ) : (
+          <>
+            {/* Shown when a sign-in link didn't work (see app/auth/confirm) */}
+            {error === "link" && (
+              <p role="alert" className="alert mb-6">
+                That sign-in link has expired or was already used. Request a
+                new one below.
+              </p>
+            )}
+            <LoginForm />
+          </>
+        )}
+      </div>
     </main>
   );
 }

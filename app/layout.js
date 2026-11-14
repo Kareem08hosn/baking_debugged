@@ -58,9 +58,18 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-full flex flex-col">
+        {/* Lets keyboard and screen reader users jump past the header */}
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <SiteHeader />
-        {/* children is whichever page is being shown */}
-        {children}
+        {/* children is whichever page is being shown. The wrapper gives the
+            skip link somewhere to land; tabIndex={-1} lets it take focus
+            without adding it to the Tab order. flex-1 keeps the footer at
+            the bottom of short pages. */}
+        <div id="main-content" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+          {children}
+        </div>
         <SiteFooter />
       </body>
     </html>

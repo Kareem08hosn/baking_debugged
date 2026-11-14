@@ -23,8 +23,8 @@ export default async function RecipePage({ params }) {
   const recipe = await getRecipeById(id);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 pt-5">
-      <Link href="/recipes" className="font-mono text-sm text-muted hover:underline">
+    <main className="page pt-5">
+      <Link href="/recipes" className="inline-block py-1 font-mono text-sm text-muted hover:underline">
         ← All recipes
       </Link>
 

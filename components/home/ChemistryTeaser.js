@@ -18,8 +18,8 @@ function PenCross() {
 }
 
 // The homepage's chemistry feature: one explainer, taped in on graph paper.
-// The text is written here for now. Once the Chemistry pages exist it should
-// come from the same place they do.
+// A shorter, hand-picked version of chemistry note #01 (the full text is in
+// lib/chemistry/content.js). If that note changes, check this still agrees.
 export default function ChemistryTeaser() {
   return (
     <section className="page pb-18">
