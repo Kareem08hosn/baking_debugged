@@ -7,7 +7,7 @@ import { getRecipeById } from "@/lib/recipes";
 // It gets the same params as the page, so each recipe gets its own title.
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const recipe = getRecipeById(id);
+  const recipe = await getRecipeById(id);
 
   // layout.js adds " | Baking Debugged" after this. Recipes saved in the
   // browser aren't known to the server, so they get a general title.
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
 // is "async" and we "await" it before reading the id.
 export default async function RecipePage({ params }) {
   const { id } = await params;
-  const recipe = getRecipeById(id);
+  const recipe = await getRecipeById(id);
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8">
@@ -29,8 +29,9 @@ export default async function RecipePage({ params }) {
       </Link>
 
       {/* condition ? a : b means "if condition then a, otherwise b".
-          Built-in recipes are drawn here on the server. Any other id might be
-          a recipe saved in the visitor's browser, so SavedRecipe checks there. */}
+          Recipes from the database are drawn here on the server. Any other
+          id might be a recipe saved in the visitor's browser, so SavedRecipe
+          checks there. */}
       {recipe ? <RecipeDetail recipe={recipe} /> : <SavedRecipe id={id} />}
     </main>
   );

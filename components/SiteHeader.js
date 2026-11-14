@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import AccountLink from "@/components/AccountLink";
 import ThemeToggle from "@/components/ThemeToggle";
 
 // The bar at the top of every page: logo on the left, navigation and the
@@ -35,6 +36,7 @@ export default function SiteHeader() {
           <Link href="/recipes/new" className="hover:underline">
             Add a recipe
           </Link>
+          <AccountLink />
           <ThemeToggle />
         </nav>
       </div>

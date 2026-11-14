@@ -1,8 +1,17 @@
 // "@/" is a shortcut for the project root folder (set up in jsconfig.json)
 import RecipeList from "@/components/RecipeList";
-import { recipes } from "@/lib/recipes";
+import { getRecipes } from "@/lib/recipes";
 
-export default function Home() {
+// Next.js keeps a finished copy of this page and serves that to visitors, so
+// most visits don't touch the database at all. This number is how many
+// seconds a copy may be reused before it is rebuilt with fresh data, so a
+// change in the database shows up within a minute.
+export const revalidate = 60;
+
+// "async" lets the page wait for the database before it is drawn.
+export default async function Home() {
+  const recipes = await getRecipes();
+
   return (
     // className is JSX's word for the HTML "class" attribute.
     // These are Tailwind classes: each one applies a single CSS rule.
