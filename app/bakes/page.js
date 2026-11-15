@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SignInCard from "@/components/SignInCard";
+import Stat from "@/components/Stat";
 import ExportButton from "@/components/bakes/ExportButton";
 import { summarizeBakes } from "@/lib/bakes";
 import { getMyBakes } from "@/lib/journal";
@@ -8,15 +9,6 @@ import { getUser } from "@/lib/supabase/server";
 export const metadata = { title: "Bake log" };
 
 // One figure in the summary strip
-function Stat({ label, value }) {
-  return (
-    <div className="bg-surface px-4 py-3">
-      <dt className="label">{label}</dt>
-      <dd className="mt-0.5 truncate font-mono text-xl font-bold tabular-nums">{value}</dd>
-    </div>
-  );
-}
-
 // "72 %" or "–" for a missing number
 function show(value, unit = "") {
   return value === null ? "–" : `${value}${unit}`;
@@ -28,7 +20,7 @@ export default async function BakesPage() {
   if (!user) {
     return (
       <main className="page pt-6">
-        <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+        <h1 className="page-title">
           <span className="highlight">Bake log</span>
         </h1>
         <SignInCard
@@ -46,7 +38,7 @@ export default async function BakesPage() {
     <main className="page pt-6">
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div>
-          <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+          <h1 className="page-title">
             <span className="highlight">Bake log</span>
           </h1>
           <p className="mt-4 max-w-xl text-lg">

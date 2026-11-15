@@ -15,7 +15,7 @@ const numberClass = "field mt-1 font-mono text-lg font-bold tabular-nums";
 // really are in order) and a title.
 function FormStep({ number, title }) {
   return (
-    <h2 className="flex items-center gap-3 font-mono text-2xl font-extrabold tracking-tight">
+    <h2 className="flex items-center gap-3 panel-title">
       <span className="grid size-9 place-content-center rounded-full border-[1.5px] border-foreground text-base" aria-hidden="true">
         {number}
       </span>
@@ -190,7 +190,7 @@ export default function AddRecipeForm({ recipe: existing = null }) {
     // and number limits before handleSubmit runs.
     <form onSubmit={handleSubmit} className="grid gap-10">
       {/* ---------- 1. Basics ---------- */}
-      <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+      <fieldset className="note tape panel">
         {/* <fieldset> groups related fields; <legend> is the group's title */}
         <legend className="sr-only">Basics</legend>
         <FormStep number={1} title="Basics" />
@@ -284,7 +284,7 @@ export default function AddRecipeForm({ recipe: existing = null }) {
       </fieldset>
 
       {/* ---------- 2. Ingredients ---------- */}
-      <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+      <fieldset className="note tape panel">
         <legend className="sr-only">Ingredients</legend>
         <FormStep number={2} title="Ingredients" />
         <p className="mt-2 text-sm text-muted">
@@ -352,7 +352,7 @@ export default function AddRecipeForm({ recipe: existing = null }) {
       </fieldset>
 
       {/* ---------- 3. Method ---------- */}
-      <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+      <fieldset className="note tape panel">
         <legend className="sr-only">Method</legend>
         <FormStep number={3} title="Method" />
         <label htmlFor="recipe-instructions" className="mt-2 block text-sm text-muted">

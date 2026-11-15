@@ -45,7 +45,7 @@ export default async function DebuggerPage({ searchParams }) {
 
   return (
     <main className="page pt-6">
-      <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="page-title">
         <span className="highlight">Bake debugger</span>
       </h1>
       <p className="mt-4 max-w-xl text-lg">

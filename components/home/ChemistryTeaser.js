@@ -1,22 +1,7 @@
 import Link from "next/link";
+import PenCross from "@/components/PenCross";
 
 // A cross drawn with two pen strokes, for the "what goes wrong" list.
-function PenCross() {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      className="mt-0.5 size-5 flex-none"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.6"
-      strokeLinecap="round"
-      aria-hidden="true"
-    >
-      <path d="M4 4 L16 17 M16 3 L5 16" />
-    </svg>
-  );
-}
-
 // The homepage's chemistry feature: one explainer, taped in on graph paper.
 // A shorter, hand-picked version of chemistry note #01 (the full text is in
 // lib/chemistry/content.js). If that note changes, check this still agrees.

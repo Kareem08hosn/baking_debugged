@@ -16,11 +16,11 @@ export default async function SubstitutionsPage({ searchParams }) {
   return (
     <main className="page pt-6">
       {recipe && (
-        <Link href={`/recipes/${recipe.id}`} className="inline-block py-1 font-mono text-sm text-muted hover:underline">
+        <Link href={`/recipes/${recipe.id}`} className="back-link">
           ← {recipe.name}
         </Link>
       )}
-      <h1 className="mt-2 font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="mt-2 page-title">
         <span className="highlight">Substitutions</span>
       </h1>
       <p className="mt-4 max-w-xl text-lg">

@@ -11,7 +11,7 @@ export default function ErrorPage({ retry }) {
     <main className="page pb-10 pt-10">
       <div className="graph sheet mx-auto max-w-2xl px-6 pb-9 pt-11 md:px-12">
         <p className="stamp-label mb-5">Unexpected result</p>
-        <h1 className="font-mono text-[clamp(2.2rem,9vw,3.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+        <h1 className="page-title">
           <span className="highlight">This page didn’t load</span>
         </h1>
         <p className="mt-5 max-w-md text-lg">

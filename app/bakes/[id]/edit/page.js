@@ -26,10 +26,10 @@ export default async function EditBakePage({ params }) {
 
   return (
     <main className="page max-w-3xl pt-5">
-      <Link href="/bakes" className="inline-block py-1 font-mono text-sm text-muted hover:underline">
+      <Link href="/bakes" className="back-link">
         ← Bake log
       </Link>
-      <h1 className="mt-5 font-mono text-[clamp(2.2rem,9vw,3.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="mt-5 page-title">
         <span className="highlight">{bake.title}</span>
       </h1>
       <div className="mb-10 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">

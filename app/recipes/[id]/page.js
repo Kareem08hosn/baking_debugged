@@ -34,7 +34,7 @@ export default async function RecipePage({ params }) {
           dangerouslySetInnerHTML={{ __html: jsonLdText(recipeJsonLd(recipe, `${SITE_URL}/recipes/${recipe.id}`)) }}
         />
       )}
-      <Link href="/recipes" className="inline-block py-1 font-mono text-sm text-muted hover:underline print:hidden">
+      <Link href="/recipes" className="back-link print:hidden">
         ← All recipes
       </Link>
 

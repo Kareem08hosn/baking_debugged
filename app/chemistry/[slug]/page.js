@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RecipeCard from "@/components/RecipeCard";
+import PenCross from "@/components/PenCross";
 import Diagram from "@/components/chemistry/Diagram";
 import { CONTENT } from "@/lib/chemistry/content";
 import { TOPICS, getTopic, recipesForTopic } from "@/lib/chemistry/topics";
@@ -27,22 +28,6 @@ export async function generateMetadata({ params }) {
 }
 
 // A cross drawn with two pen strokes, for the "what goes wrong" list.
-function PenCross() {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      className="mt-1 size-5 flex-none"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.6"
-      strokeLinecap="round"
-      aria-hidden="true"
-    >
-      <path d="M4 4 L16 17 M16 3 L5 16" />
-    </svg>
-  );
-}
-
 // "#03" from 3
 function noteNumber(topic) {
   return `#${String(topic.number).padStart(2, "0")}`;
@@ -66,7 +51,7 @@ export default async function ChemistryNotePage({ params }) {
 
   return (
     <main className="page pt-5">
-      <Link href="/chemistry" className="inline-block py-1 font-mono text-sm text-muted hover:underline">
+      <Link href="/chemistry" className="back-link">
         ← All chemistry notes
       </Link>
 
@@ -129,7 +114,7 @@ export default async function ChemistryNotePage({ params }) {
               className={`note px-5 py-5 ${i % 2 === 0 ? "md:-rotate-[0.4deg]" : "md:rotate-[0.5deg]"}`}
             >
               <p className="flex gap-2.5 font-mono text-lg font-bold leading-snug">
-                <PenCross />
+                <PenCross className="mt-1" />
                 <span>…{failure.cause}</span>
               </p>
               <p className="mt-2.5">{failure.result}</p>

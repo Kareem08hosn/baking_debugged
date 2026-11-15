@@ -8,7 +8,7 @@ export const metadata = {
 export default function FindPage() {
   return (
     <main className="page pt-6">
-      <h1 className="font-mono text-[clamp(2.4rem,10vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="page-title">
         <span className="highlight">Find a recipe</span>
       </h1>
       <p className="mt-4 max-w-xl text-lg">

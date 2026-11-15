@@ -135,9 +135,9 @@ export default function BakeForm({ bake = null, recipes, prefill = null }) {
   return (
     <form onSubmit={handleSubmit} className="grid gap-10">
       {/* ---------- What and when ---------- */}
-      <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+      <fieldset className="note tape panel">
         <legend className="sr-only">What and when</legend>
-        <h2 className="font-mono text-2xl font-extrabold tracking-tight">What and when</h2>
+        <h2 className="panel-title">What and when</h2>
         <div className="mt-5 grid gap-4">
           <div>
             <label htmlFor="bake-recipe" className="label block">From a recipe (optional)</label>
@@ -170,9 +170,9 @@ export default function BakeForm({ bake = null, recipes, prefill = null }) {
       </fieldset>
 
       {/* ---------- Measurements ---------- */}
-      <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+      <fieldset className="note tape panel">
         <legend className="sr-only">Measurements</legend>
-        <h2 className="font-mono text-2xl font-extrabold tracking-tight">Measurements</h2>
+        <h2 className="panel-title">Measurements</h2>
         <div className="graph mt-5 grid grid-cols-2 gap-4 border-[1.5px] border-foreground p-3.5 sm:grid-cols-4">
           {MEASUREMENTS.map((key) =>
             input(key, key === "hydrationPct" && workedOutHydration !== null ? { placeholder: String(workedOutHydration) } : {})
@@ -187,9 +187,9 @@ export default function BakeForm({ bake = null, recipes, prefill = null }) {
       </fieldset>
 
       {/* ---------- What happened ---------- */}
-      <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+      <fieldset className="note tape panel">
         <legend className="sr-only">What happened</legend>
-        <h2 className="font-mono text-2xl font-extrabold tracking-tight">What happened</h2>
+        <h2 className="panel-title">What happened</h2>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {RESULTS.map((key) => input(key, { placeholder: key === "rise" ? "doubled in 3 h; spread 2 cm" : "open, a bit gummy" }))}
         </div>

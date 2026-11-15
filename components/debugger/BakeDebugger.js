@@ -66,9 +66,9 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
           <p className="hand -rotate-1 text-muted">you wrote: “{note}”</p>
         )}
 
-        <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+        <fieldset className="note tape panel">
           <legend className="sr-only">What did you bake?</legend>
-          <h2 aria-hidden="true" className="font-mono text-2xl font-extrabold tracking-tight">1. What did you bake?</h2>
+          <h2 aria-hidden="true" className="panel-title">1. What did you bake?</h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {BAKE_TYPES.map((item) => (
               <label key={item.id} className={CHIP}>
@@ -80,9 +80,9 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
         </fieldset>
 
         {type && (
-          <fieldset className="note tape px-4 pb-5 pt-8 sm:px-6">
+          <fieldset className="note tape panel">
             <legend className="sr-only">What went wrong? Choose all that apply.</legend>
-            <h2 aria-hidden="true" className="font-mono text-2xl font-extrabold tracking-tight">2. What went wrong?</h2>
+            <h2 aria-hidden="true" className="panel-title">2. What went wrong?</h2>
             <p className="mt-1 text-sm text-muted">Choose all that apply.</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {SYMPTOMS[type].map((item) => (
@@ -191,7 +191,7 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
         {type && (
           <fieldset className="note px-4 pb-5 pt-6 sm:px-6">
             <legend className="sr-only">Details (optional)</legend>
-            <h2 aria-hidden="true" className="font-mono text-2xl font-extrabold tracking-tight">3. Details</h2>
+            <h2 aria-hidden="true" className="panel-title">3. Details</h2>
             <p className="mt-1 text-sm text-muted">Optional. Each answer sharpens the ranking.</p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {detailsFor(type).map((detail) => (

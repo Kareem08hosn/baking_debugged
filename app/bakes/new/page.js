@@ -27,10 +27,10 @@ export default async function NewBakePage({ searchParams }) {
 
   return (
     <main className="page max-w-3xl pt-5">
-      <Link href="/bakes" className="inline-block py-1 font-mono text-sm text-muted hover:underline">
+      <Link href="/bakes" className="back-link">
         ← Bake log
       </Link>
-      <h1 className="mt-5 font-mono text-[clamp(2.4rem,10vw,4rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="mt-5 page-title">
         <span className="highlight">Log a bake</span>
       </h1>
       <p className="mb-10 mt-4 max-w-xl text-lg">

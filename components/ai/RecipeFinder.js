@@ -32,8 +32,8 @@ export default function RecipeFinder() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="note tape px-4 pb-5 pt-8 sm:px-6">
-        <label htmlFor="find-text" className="font-mono text-2xl font-extrabold tracking-tight">
+      <form onSubmit={handleSubmit} className="note tape panel">
+        <label htmlFor="find-text" className="panel-title">
           What are you in the mood for?
         </label>
         <textarea

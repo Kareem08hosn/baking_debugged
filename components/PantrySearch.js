@@ -46,8 +46,8 @@ export default function PantrySearch({ recipes }) {
 
   return (
     <div>
-      <div className="note tape px-4 pb-5 pt-8 sm:px-6">
-        <label htmlFor="pantry-input" className="font-mono text-2xl font-extrabold tracking-tight">
+      <div className="note tape panel">
+        <label htmlFor="pantry-input" className="panel-title">
           What’s in your kitchen?
         </label>
         <p className="mt-1 text-sm text-muted">Type an ingredient and press Enter.</p>

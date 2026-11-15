@@ -19,7 +19,7 @@ export default async function RecipesPage() {
           From "sm" up the links sit to the right of the title. */}
       <div className="mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div>
-          <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+          <h1 className="page-title">
             <span className="highlight">Recipes</span>
           </h1>
           <p className="mt-3 max-w-xl text-lg">

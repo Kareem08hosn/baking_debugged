@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }) {
     // One column on phones; from "md" up the explanation sits beside the form.
     <main className="page grid gap-10 pt-8 md:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] md:items-start md:gap-14 md:pt-12">
       <div>
-        <h1 className="font-mono text-[clamp(2.4rem,10vw,4rem)] font-extrabold leading-none tracking-[-0.05em]">
+        <h1 className="page-title">
           <span className="highlight">Sign in</span>
         </h1>
         <p className="mt-5 max-w-md text-lg">

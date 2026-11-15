@@ -51,7 +51,7 @@ export default async function AboutPage() {
       {/* ---------- Intro + the "ID card" ---------- */}
       <section className="grid gap-10 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:items-center">
         <div>
-          <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+          <h1 className="page-title">
             <span className="highlight">About</span>
           </h1>
           <p className="mt-5 max-w-xl text-lg">

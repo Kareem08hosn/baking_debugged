@@ -61,8 +61,8 @@ export default function ImportBakes() {
 
   return (
     <div className="grid gap-8">
-      <div className="note tape px-4 pb-5 pt-8 sm:px-6">
-        <h2 className="font-mono text-2xl font-extrabold tracking-tight">1. Choose the file</h2>
+      <div className="note tape panel">
+        <h2 className="panel-title">1. Choose the file</h2>
         <p className="mt-2 max-w-xl text-muted">
           Export your spreadsheet as CSV (File → Download → CSV, or Save As →
           CSV). The first row must be the column names. Dates as YYYY-MM-DD.
@@ -96,8 +96,8 @@ export default function ImportBakes() {
       </div>
 
       {result && (
-        <div className="note tape px-4 pb-5 pt-8 sm:px-6" aria-live="polite">
-          <h2 className="font-mono text-2xl font-extrabold tracking-tight">2. Check it</h2>
+        <div className="note tape panel" aria-live="polite">
+          <h2 className="panel-title">2. Check it</h2>
 
           {result.missing && (
             <p role="alert" className="alert mt-4">

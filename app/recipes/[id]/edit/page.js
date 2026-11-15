@@ -28,10 +28,10 @@ export default async function EditRecipePage({ params }) {
 
   return (
     <main className="page max-w-3xl pt-5">
-      <Link href={`/recipes/${recipe.id}`} className="inline-block py-1 font-mono text-sm text-muted hover:underline">
+      <Link href={`/recipes/${recipe.id}`} className="back-link">
         ← Back to the recipe
       </Link>
-      <h1 className="mt-5 font-mono text-[clamp(2.4rem,10vw,4rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="mt-5 page-title">
         <span className="highlight">Edit recipe</span>
       </h1>
       <p className="mb-10 mt-4 max-w-xl text-lg">

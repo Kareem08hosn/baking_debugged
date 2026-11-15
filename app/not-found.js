@@ -9,7 +9,7 @@ export default function NotFound() {
     <main className="page pb-10 pt-10">
       <div className="graph sheet mx-auto max-w-2xl px-6 pb-9 pt-11 md:px-12">
         <p className="stamp-label mb-5">Error 404</p>
-        <h1 className="font-mono text-[clamp(2.4rem,10vw,4rem)] font-extrabold leading-none tracking-[-0.05em]">
+        <h1 className="page-title">
           <span className="highlight">Experiment failed</span>
         </h1>
         <p className="mt-5 max-w-md text-lg">

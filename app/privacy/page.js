@@ -61,14 +61,14 @@ function aiParagraphs() {
 export default function PrivacyPage() {
   return (
     <main className="page max-w-3xl pt-6">
-      <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="page-title">
         <span className="highlight">Privacy</span>
       </h1>
       <p className="mt-3 font-mono text-sm text-muted">Last updated 14 November 2026</p>
 
       {SECTIONS.map((section) => (
         <section key={section.heading} className="mt-10 max-w-[65ch]">
-          <h2 className="font-mono text-2xl font-extrabold tracking-tight">{section.heading}</h2>
+          <h2 className="panel-title">{section.heading}</h2>
           {(section.heading === "AI features" ? aiParagraphs() : section.paragraphs).map((paragraph) => (
             <p key={paragraph} className="mt-3 text-[1.0625rem] leading-relaxed">
               {paragraph}

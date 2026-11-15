@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 import RatingStamp from "@/components/RatingStamp";
+import Stat from "@/components/Stat";
 import HydrationGauge from "@/components/recipe/HydrationGauge";
 import BakingMode from "@/components/recipe/BakingMode";
 import MethodSteps from "@/components/recipe/MethodSteps";
@@ -22,17 +23,6 @@ import {
 } from "@/lib/scaler";
 import { yieldWord } from "@/lib/servings";
 import { UNIT_SYSTEMS, formatAmount, hasVolume } from "@/lib/units";
-
-// One cell in the strip of key numbers under the title.
-function Stat({ label, value }) {
-  return (
-    <div className="bg-surface px-4 py-3">
-      {/* <dt> is the term and <dd> its value, inside the <dl> list below */}
-      <dt className="label">{label}</dt>
-      <dd className="font-mono text-xl font-bold tabular-nums">{value}</dd>
-    </div>
-  );
-}
 
 // Shows one full recipe, with controls that rescale the ingredients.
 // It is shared by the built-in recipes and the ones saved in the browser.
@@ -190,7 +180,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
           className="note tape min-w-0 self-start px-4 pb-5 pt-7 md:col-span-2"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h2 id="ingredients-heading" className="font-mono text-2xl font-extrabold tracking-tight">
+            <h2 id="ingredients-heading" className="panel-title">
               Ingredients
             </h2>
             {/* Browser-only recipes aren't on the server, so the swap page

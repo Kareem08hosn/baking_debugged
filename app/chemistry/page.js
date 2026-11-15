@@ -20,7 +20,7 @@ export default function ChemistryPage() {
     <main className="page pt-6">
       <div className="grid gap-x-10 gap-y-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
         <div>
-          <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+          <h1 className="page-title">
             <span className="highlight">Chemistry</span>
           </h1>
           <p className="mt-4 max-w-xl text-lg">

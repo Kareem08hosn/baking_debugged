@@ -27,14 +27,14 @@ export default async function AccountPage() {
 
   return (
     <main className="page max-w-4xl pt-6">
-      <h1 className="font-mono text-[clamp(2.6rem,11vw,4.5rem)] font-extrabold leading-none tracking-[-0.05em]">
+      <h1 className="page-title">
         <span className="highlight">Account</span>
       </h1>
       <p className="mt-4 break-words font-mono text-muted">Signed in as {user.email}</p>
 
       <div className="mt-10 grid gap-10 md:grid-cols-2">
         <section aria-labelledby="places-heading">
-          <h2 id="places-heading" className="font-mono text-2xl font-extrabold tracking-tight">Your notebook</h2>
+          <h2 id="places-heading" className="panel-title">Your notebook</h2>
           <ul className="mt-4">
             {PLACES.map((place) => (
               <li key={place.href} className="border-b border-dashed border-line last:border-b-0">
@@ -48,7 +48,7 @@ export default async function AccountPage() {
         </section>
 
         <section aria-labelledby="prefs-heading" className="note tape px-5 pb-6 pt-8">
-          <h2 id="prefs-heading" className="font-mono text-2xl font-extrabold tracking-tight">Preferences</h2>
+          <h2 id="prefs-heading" className="panel-title">Preferences</h2>
           <div className="mt-4">
             <PreferencesForm />
           </div>
