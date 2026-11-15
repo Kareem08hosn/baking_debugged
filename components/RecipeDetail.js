@@ -25,10 +25,8 @@ import { yieldWord } from "@/lib/servings";
 import { UNIT_SYSTEMS, formatAmount, hasVolume } from "@/lib/units";
 
 // Shows one full recipe, with controls that rescale the ingredients.
-// It is shared by the built-in recipes and the ones saved in the browser.
-// canSave is false for recipes saved only in this browser: they aren't in
-// the database, so they can't be saved, logged as bakes or given notes.
-export default function RecipeDetail({ recipe, canSave = true }) {
+// It is shared by the site's recipes and the signed-in person's own.
+export default function RecipeDetail({ recipe }) {
   // What is in the servings box. Inputs always hold text, so this is text
   // ("12"), and it starts as the recipe's own servings.
   const [servingsText, setServingsText] = useState(String(recipe.servings));
@@ -150,7 +148,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
             .{isUntested && " Not test-baked here yet."}
           </p>
         )}
-        {canSave && <SaveButton recipeId={recipe.id} />}
+        <SaveButton recipeId={recipe.id} />
         <BakingMode />
       </div>
 
@@ -183,9 +181,7 @@ export default function RecipeDetail({ recipe, canSave = true }) {
             <h2 id="ingredients-heading" className="panel-title">
               Ingredients
             </h2>
-            {/* Browser-only recipes aren't on the server, so the swap page
-                couldn't show their ingredients; it still works without. */}
-            <Link href={canSave ? `/substitutions?recipe=${recipe.id}` : "/substitutions"} className="font-mono text-sm underline underline-offset-4 print:hidden">
+            <Link href={`/substitutions?recipe=${recipe.id}`} className="font-mono text-sm underline underline-offset-4 print:hidden">
               Swap an ingredient
             </Link>
           </div>
@@ -392,11 +388,9 @@ export default function RecipeDetail({ recipe, canSave = true }) {
         </section>
       </div>
 
-      {canSave && (
-        <div className="print:hidden">
-          <RecipeJournal recipe={recipe} />
-        </div>
-      )}
+      <div className="print:hidden">
+        <RecipeJournal recipe={recipe} />
+      </div>
     </>
   );
 }

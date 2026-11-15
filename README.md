@@ -8,7 +8,7 @@ A baking website that treats every bake as an experiment: recipes measured in gr
 - **Chemistry notes**: eight short explainers (leaveners, gluten, hydration, sugar, fats, eggs, browning, oven temperature), each with a diagram, a “what goes wrong if…” list and recipes that show it.
 - **Bake debugger**: pick what you baked and what went wrong; a rules engine built from baking chemistry ranks the likely causes, shows which of your answers pointed there, and says what to change.
 - **Lab tools**: a recipe scaler, a pan-size converter, a unit and oven-temperature converter, and high-altitude adjustments.
-- **What can I make?**: type what’s in your kitchen and see which recipes fit.
+- **Find a recipe** (/find): describe what you feel like baking, or type what’s in your kitchen and see which recipes fit.
 - **Accounts** (magic-link sign-in): your own private recipes, saved recipes, notes on any recipe, preferences, and a **bake log** with CSV import and export.
 - **AI features (switched off until a Gemini key is set)**: substitutions with the chemistry behind each swap, plain-language explanations of a debug report, and finding a recipe by describing it (embeddings + pgvector). Each one already works without AI: a curated swap table, the rules engine, and keyword search.
 - **Data analysis** (Python): a notebook that asks which measurements go with good bakes, with cross-validated models that must beat a baseline to count.

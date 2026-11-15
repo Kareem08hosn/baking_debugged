@@ -7,7 +7,6 @@ import RecipeCard from "@/components/RecipeCard";
 import { useFavourites } from "@/lib/favourites";
 import { useMyRecipes } from "@/lib/myRecipes";
 import { usePreferences } from "@/lib/preferences";
-import { useSavedRecipes } from "@/lib/savedRecipes";
 
 // "easy" < "medium" < "hard" isn't alphabetical, so give each one a number.
 const difficultyOrder = { easy: 1, medium: 2, hard: 3 };
@@ -76,15 +75,8 @@ function SearchIcon() {
 export default function RecipeList({ recipes: builtInRecipes }) {
   // The signed-in person's own recipes, from the database (lib/myRecipes.js).
   const myRecipes = useMyRecipes().recipes;
-  // Recipes added before accounts existed live in this browser
-  // (lib/savedRecipes.js). The hook gives null until they have loaded; ??
-  // swaps that for an empty list. isLocal marks them as the person's own.
-  const localRecipes = (useSavedRecipes() ?? []).map((recipe) => ({
-    ...recipe,
-    isLocal: true,
-  }));
-  // [...a, ...b, ...c] makes one new array holding everything from all three.
-  const recipes = [...builtInRecipes, ...myRecipes, ...localRecipes];
+  // [...a, ...b] makes one new array holding everything from both lists.
+  const recipes = [...builtInRecipes, ...myRecipes];
   // Ids of the recipes saved with the Save button (lib/favourites.js)
   const favouriteIds = useFavourites().ids;
 
@@ -133,7 +125,7 @@ export default function RecipeList({ recipes: builtInRecipes }) {
       return favouriteIds.includes(recipe.id);
     }
     if (value === "mine") {
-      return recipe.owner != null || recipe.isLocal === true;
+      return recipe.owner != null;
     }
     return recipe.category === value;
   }

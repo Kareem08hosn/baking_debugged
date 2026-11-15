@@ -7,7 +7,7 @@ export const revalidate = 3600;
 
 // /sitemap.xml: every public page, so search engines can find them all.
 export default async function sitemap() {
-  const pages = ["", "/recipes", "/chemistry", "/tools", "/debugger", "/pantry", "/find", "/substitutions", "/about", "/privacy"];
+  const pages = ["", "/recipes", "/chemistry", "/tools", "/debugger", "/find", "/substitutions", "/about", "/privacy"];
   const recipes = await getRecipes();
   return [
     ...pages.map((path) => ({ url: `${SITE_URL}${path}` })),

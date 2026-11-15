@@ -6,18 +6,14 @@ import { useRouter } from "next/navigation";
 import RecipeDetail from "@/components/RecipeDetail";
 import { deleteRecipe } from "@/app/recipes/actions";
 import { fetchMyRecipe } from "@/lib/myRecipes";
-import { deleteSavedRecipe, useSavedRecipes } from "@/lib/savedRecipes";
 
 // Shows a recipe that isn't one of the site's own: the server couldn't find
-// it, so it must be private. It is looked for in two places, in order:
-//   1. the signed-in person's recipes in the database
-//   2. recipes saved in this browser before accounts existed (localStorage)
+// it, so it must be private. It is looked for among the signed-in person's
+// recipes, in the browser, where the sign-in cookie is.
 export default function UserRecipe({ id }) {
   const router = useRouter();
-  const localRecipes = useSavedRecipes(); // null until loaded
-
   // What the database said: undefined = still asking, null = not there
-  const [dbRecipe, setDbRecipe] = useState(undefined);
+  const [recipe, setRecipe] = useState(undefined);
   // The delete flow: "idle", "confirming" (asking "are you sure?"),
   // "deleting", or an error message
   const [deleteState, setDeleteState] = useState("idle");
@@ -26,7 +22,7 @@ export default function UserRecipe({ id }) {
     let ignore = false;
     fetchMyRecipe(id).then((recipe) => {
       if (!ignore) {
-        setDbRecipe(recipe);
+        setRecipe(recipe);
       }
     });
     return () => {
@@ -34,12 +30,7 @@ export default function UserRecipe({ id }) {
     };
   }, [id]);
 
-  const localRecipe = localRecipes?.find((recipe) => recipe.id === Number(id));
-  const recipe = dbRecipe ?? localRecipe;
-  const isInDatabase = Boolean(dbRecipe);
-
-  // Still waiting for either source
-  if (dbRecipe === undefined || (!dbRecipe && localRecipes === null)) {
+  if (recipe === undefined) {
     return <p className="mt-6 font-mono text-muted">Loading the recipe…</p>;
   }
 
@@ -65,30 +56,22 @@ export default function UserRecipe({ id }) {
 
   async function handleDelete() {
     setDeleteState("deleting");
-    if (isInDatabase) {
-      const result = await deleteRecipe(recipe.id);
-      if (result.error) {
-        setDeleteState(result.error);
-        return;
-      }
-    } else {
-      deleteSavedRecipe(recipe.id);
+    const result = await deleteRecipe(recipe.id);
+    if (result.error) {
+      setDeleteState(result.error);
+      return;
     }
     router.push("/recipes");
   }
 
   return (
     <>
-      <RecipeDetail recipe={recipe} canSave={isInDatabase} />
+      <RecipeDetail recipe={recipe} />
 
       <div className="mt-14 flex flex-wrap items-center gap-x-4 gap-y-3 border-t-[1.5px] border-dashed border-foreground pt-5">
-        <p className="text-sm text-muted">
-          {isInDatabase
-            ? "Your recipe. Only you can see it."
-            : "You added this recipe before accounts existed. It is saved in this browser only."}
-        </p>
+        <p className="text-sm text-muted">Your recipe. Only you can see it.</p>
 
-        {isInDatabase && deleteState === "idle" && (
+        {deleteState === "idle" && (
           <Link href={`/recipes/${recipe.id}/edit`} className="btn-quiet">
             Edit this recipe
           </Link>

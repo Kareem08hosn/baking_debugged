@@ -24,11 +24,10 @@ const TYPE_FOR_CATEGORY = {
 };
 
 // /debugger, or /debugger?bake=12 to start from a logged bake: the bake
-// type comes from its recipe, and its hydration and notes are filled in.
+// type comes from its recipe, and its notes are shown as a reminder.
 export default async function DebuggerPage({ searchParams }) {
   const { bake: bakeId } = await searchParams;
   let initialType = "";
-  let initialDetails = {};
   let note = null;
 
   const bake = bakeId ? await getMyBake(bakeId) : null;
@@ -37,9 +36,6 @@ export default async function DebuggerPage({ searchParams }) {
       ? ((await getRecipeById(bake.recipeId)) ?? (await getOwnRecipe(bake.recipeId)))
       : null;
     initialType = TYPE_FOR_CATEGORY[recipe?.category] ?? "";
-    if (bake.hydrationPct !== null) {
-      initialDetails = { hydrationPct: String(bake.hydrationPct) };
-    }
     note = bake.whatWentWrong;
   }
 
@@ -49,8 +45,8 @@ export default async function DebuggerPage({ searchParams }) {
         <span className="highlight">Bake debugger</span>
       </h1>
       <p className="mt-4 max-w-xl text-lg">
-        Tell it what went wrong. It ranks the likely causes, shows which of
-        your answers pointed there, and says what to change next time.
+        Tell it what went wrong. It ranks the likely causes, says why each
+        one happens, and says what to change next time.
       </p>
       {bake && (
         <p className="mt-2 font-mono text-sm text-muted">
@@ -58,7 +54,7 @@ export default async function DebuggerPage({ searchParams }) {
         </p>
       )}
       <div className="mt-10">
-        <BakeDebugger initialType={initialType} initialDetails={initialDetails} note={note} aiEnabled={isAiEnabled()} />
+        <BakeDebugger initialType={initialType} note={note} aiEnabled={isAiEnabled()} />
       </div>
     </main>
   );

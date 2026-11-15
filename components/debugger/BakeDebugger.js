@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { explainDiagnosis } from "@/app/debugger/actions";
 import { getTopic } from "@/lib/chemistry/topics";
-import { BAKE_TYPES, SYMPTOMS, cleanDetails, detailsFor, diagnose } from "@/lib/debugger";
+import { BAKE_TYPES, SYMPTOMS, diagnose } from "@/lib/debugger";
 
 // A choice drawn as a chip. The real input (radio or checkbox) is hidden
 // but still works with keyboards and screen readers; Tailwind's "has-"
@@ -12,15 +12,14 @@ import { BAKE_TYPES, SYMPTOMS, cleanDetails, detailsFor, diagnose } from "@/lib/
 const CHIP =
   "chip relative cursor-pointer has-[:checked]:bg-foreground has-[:checked]:text-background has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-foreground";
 
-// The debugger: pick a bake type and symptoms (plus optional details) and
-// the likely causes update as you go.
-//   initialType, initialDetails  pre-filled from a logged bake, or empty
-//   note                          that bake's "what went wrong", shown as a reminder
-//   aiEnabled                     from the server: can the AI explain it?
-export default function BakeDebugger({ initialType = "", initialDetails = {}, note = null, aiEnabled = false }) {
+// The debugger: pick a bake type and symptoms and the likely causes update
+// as you go.
+//   initialType  pre-filled from a logged bake, or empty
+//   note         that bake's "what went wrong", shown as a reminder
+//   aiEnabled    from the server: can the AI explain it?
+export default function BakeDebugger({ initialType = "", note = null, aiEnabled = false }) {
   const [type, setType] = useState(initialType);
   const [symptoms, setSymptoms] = useState([]);
-  const [rawDetails, setRawDetails] = useState(initialDetails);
 
   function chooseType(id) {
     setType(id);
@@ -31,37 +30,29 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
     setSymptoms(symptoms.includes(id) ? symptoms.filter((item) => item !== id) : [...symptoms, id]);
   }
 
-  function setDetail(id, value) {
-    setRawDetails({ ...rawDetails, [id]: value });
-  }
-
-  const results = type ? diagnose(type, symptoms, cleanDetails(rawDetails)) : [];
+  const results = type ? diagnose(type, symptoms) : [];
 
   // The AI explanation, remembered with the answers it explains: if the
   // answers change, the old explanation is no longer shown.
-  const answersKey = JSON.stringify([type, [...symptoms].sort(), cleanDetails(rawDetails)]);
+  const answersKey = JSON.stringify([type, [...symptoms].sort()]);
   const [explanation, setExplanation] = useState(null); // { key, result } or { key, error }
   const [isExplaining, setIsExplaining] = useState(false);
   const shownExplanation = explanation?.key === answersKey ? explanation : null;
 
   async function handleExplain() {
     setIsExplaining(true);
-    const response = await explainDiagnosis({ type, symptoms, details: rawDetails });
+    const response = await explainDiagnosis({ type, symptoms });
     setExplanation({ key: answersKey, ...response });
     setIsExplaining(false);
   }
 
   return (
-    // Three blocks: questions 1-2, the report, then question 3. On phones
-    // they stack in that order, so the report comes right after the
-    // symptoms. From "lg" up, questions 1-3 share the left column and the
-    // report fills the right one (col-start / row-span place it there).
-    // grid-rows-[auto_1fr]: the first row is only as tall as questions 1-2,
-    // so the tall report's extra height goes into the second row instead of
-    // leaving a gap above question 3.
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:grid-rows-[auto_1fr] lg:items-start">
-      {/* ---------- Questions 1 and 2 ---------- */}
-      <div className="grid gap-8 lg:col-start-1">
+    // Two blocks: the questions, then the report. On phones they stack, so
+    // the report comes right after the symptoms. From "lg" up they sit side
+    // by side.
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start">
+      {/* ---------- The questions ---------- */}
+      <div className="grid gap-8">
         {note && (
           <p className="hand -rotate-1 text-muted">you wrote: “{note}”</p>
         )}
@@ -94,11 +85,10 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
             </div>
           </fieldset>
         )}
-
       </div>
 
       {/* ---------- The report ---------- */}
-      <section aria-labelledby="report-heading" className="lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+      <section aria-labelledby="report-heading" className="lg:sticky lg:top-6">
         <h2 id="report-heading" className="section-title">
           <span className="highlight">Debug report</span>
         </h2>
@@ -141,8 +131,8 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
           <div className="graph sheet mt-6 px-5 pb-6 pt-8">
             <p className="font-mono font-bold">No symptoms yet</p>
             <p className="mt-1.5">
-              Likely causes appear here as you answer, with the reasons they
-              ranked where they did and what to change next time.
+              Likely causes appear here as you answer, with why each happens
+              and what to change next time.
             </p>
           </div>
         ) : (
@@ -185,54 +175,6 @@ export default function BakeDebugger({ initialType = "", initialDetails = {}, no
           at a time and log the next bake, so you know what fixed it.
         </p>
       </section>
-
-      {/* ---------- Question 3 ---------- */}
-      <div className="lg:col-start-1">
-        {type && (
-          <fieldset className="note px-4 pb-5 pt-6 sm:px-6">
-            <legend className="sr-only">Details (optional)</legend>
-            <h2 aria-hidden="true" className="panel-title">3. Details</h2>
-            <p className="mt-1 text-sm text-muted">Optional. Each answer sharpens the ranking.</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {detailsFor(type).map((detail) => (
-                <div key={detail.id}>
-                  <label htmlFor={`detail-${detail.id}`} className="label block normal-case tracking-normal text-[0.8125rem]">
-                    {detail.label}
-                    {detail.unit && ` (${detail.unit})`}
-                  </label>
-                  {detail.kind === "number" ? (
-                    <input
-                      id={`detail-${detail.id}`}
-                      className="field mt-1 font-mono"
-                      type="number"
-                      inputMode="decimal"
-                      step="any"
-                      min={detail.min}
-                      max={detail.max}
-                      value={rawDetails[detail.id] ?? ""}
-                      onChange={(event) => setDetail(detail.id, event.target.value)}
-                    />
-                  ) : (
-                    <select
-                      id={`detail-${detail.id}`}
-                      className="field mt-1"
-                      value={rawDetails[detail.id] ?? ""}
-                      onChange={(event) => setDetail(detail.id, event.target.value)}
-                    >
-                      <option value="">not sure</option>
-                      {(detail.kind === "yes-no" ? [["yes", "Yes"], ["no", "No"]] : detail.options).map(([value, label]) => (
-                        <option key={value} value={value}>{label}</option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              ))}
-            </div>
-          </fieldset>
-        )}
-      </div>
-
-
     </div>
   );
 }

@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  // /pantry was merged into /find
+  async redirects() {
+    return [{ source: "/pantry", destination: "/find", permanent: true }];
+  },
   turbopack: {
     rules: {
       "*.css": {

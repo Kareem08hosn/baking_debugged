@@ -38,10 +38,7 @@ export default async function RecipesPage() {
           className="flex flex-wrap gap-x-4 text-[0.8125rem]"
         >
           <Link href="/find" className="link inline-flex min-h-9 items-center">
-            Describe it
-          </Link>
-          <Link href="/pantry" className="link inline-flex min-h-9 items-center">
-            What can I make?
+            Find by description or pantry
           </Link>
           <Link href="/recipes/new" className="link inline-flex min-h-9 items-center">
             Add a recipe

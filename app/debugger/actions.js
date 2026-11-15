@@ -6,10 +6,10 @@
 import { generateJson } from "@/lib/ai/gemini";
 import { runAiTask } from "@/lib/ai/run";
 import { checkExplanation, explanationPrompt } from "@/lib/ai/tasks";
-import { BAKE_TYPES, SYMPTOMS, cleanDetails, diagnose } from "@/lib/debugger";
+import { BAKE_TYPES, SYMPTOMS, diagnose } from "@/lib/debugger";
 
 // Returns { result: { summary, tryFirst }, cached } or { error }.
-export async function explainDiagnosis({ type, symptoms, details }) {
+export async function explainDiagnosis({ type, symptoms }) {
   // Check everything against the known lists: never trust the browser.
   const bakeType = BAKE_TYPES.find((item) => item.id === type);
   const known = SYMPTOMS[type] ?? [];
@@ -19,14 +19,13 @@ export async function explainDiagnosis({ type, symptoms, details }) {
   if (!bakeType || chosen.length === 0) {
     return { error: "Choose what you baked and what went wrong first." };
   }
-  const cleanedDetails = cleanDetails(details ?? {});
 
   // The diagnosis is worked out again here, on the server, from the rules.
-  const causes = diagnose(type, chosen.map((item) => item.id), cleanedDetails).slice(0, 3);
+  const causes = diagnose(type, chosen.map((item) => item.id)).slice(0, 3);
 
   return runAiTask({
     kind: "explanation",
-    input: { type, symptoms: chosen.map((item) => item.id).sort(), details: cleanedDetails },
+    input: { type, symptoms: chosen.map((item) => item.id).sort() },
     ask: async () => {
       const answer = await generateJson(
         explanationPrompt({ typeLabel: bakeType.label, symptomLabels: chosen.map((item) => item.label), causes })

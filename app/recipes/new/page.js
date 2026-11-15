@@ -1,6 +1,5 @@
 import Link from "next/link";
 import AddRecipeForm from "@/components/AddRecipeForm";
-import MoveLocalRecipes from "@/components/MoveLocalRecipes";
 import SignInCard from "@/components/SignInCard";
 import { getUser } from "@/lib/supabase/server";
 
@@ -29,7 +28,6 @@ export default async function NewRecipePage() {
             to do. It’s saved to your account and only you can see it, with
             scaling and unit conversion like every other recipe.
           </p>
-          <MoveLocalRecipes />
           <AddRecipeForm />
         </>
       ) : (

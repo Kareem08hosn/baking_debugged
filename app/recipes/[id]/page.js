@@ -11,8 +11,8 @@ export async function generateMetadata({ params }) {
   const { id } = await params;
   const recipe = await getRecipeById(id);
 
-  // layout.js adds " | Baking Debugged" after this. Recipes saved in the
-  // browser aren't known to the server, so they get a general title.
+  // layout.js adds " | Baking Debugged" after this. Private recipes aren't
+  // known to the server, so they get a general title.
   return { title: recipe ? recipe.name : "Recipe" };
 }
 
