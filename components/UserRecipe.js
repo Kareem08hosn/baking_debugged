@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ConfirmDelete from "@/components/ConfirmDelete";
 import RecipeDetail from "@/components/RecipeDetail";
 import { deleteRecipe } from "@/app/recipes/actions";
 import { fetchMyRecipe } from "@/lib/myRecipes";
@@ -84,24 +85,11 @@ export default function UserRecipe({ id }) {
           </button>
         )}
         {(deleteState === "confirming" || deleteState === "deleting") && (
-          <span className="flex flex-wrap items-center gap-3" role="group" aria-label="Confirm delete">
-            <span className="font-mono text-sm font-bold">Delete it for good?</span>
-            <button
-              type="button"
-              className="btn-quiet"
-              disabled={deleteState === "deleting"}
-              onClick={handleDelete}
-            >
-              {deleteState === "deleting" ? "Deleting…" : "Yes, delete"}
-            </button>
-            <button
-              type="button"
-              className="font-mono text-sm underline underline-offset-4"
-              onClick={() => setDeleteState("idle")}
-            >
-              Keep it
-            </button>
-          </span>
+          <ConfirmDelete
+            busy={deleteState === "deleting"}
+            onConfirm={handleDelete}
+            onCancel={() => setDeleteState("idle")}
+          />
         )}
         {/* Anything else is an error message from the server */}
         {!["idle", "confirming", "deleting"].includes(deleteState) && (

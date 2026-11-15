@@ -1,15 +1,17 @@
 import Link from "next/link";
+import PanConverter from "@/components/tools/PanConverter";
 import RecipeScaler from "@/components/tools/RecipeScaler";
+import UnitConverter from "@/components/tools/UnitConverter";
 import AltitudeAdjuster from "@/components/tools/AltitudeAdjuster";
 
 export const metadata = {
   title: "Lab tools",
   description:
-    "Scale any recipe, and adjust one for high altitude.",
+    "Scale any recipe, convert between pan sizes, and turn grams into cups and back.",
 };
 
-// The tools, with a short explanation beside each. "id" lets the jump
-// links at the top scroll to a section (/tools#altitude).
+// The three tools, with a short explanation beside each. "id" lets the
+// jump links at the top scroll to a section (/tools#pans).
 const SECTIONS = [
   {
     id: "scaler",
@@ -17,6 +19,20 @@ const SECTIONS = [
     text: "Type a recipe’s ingredients in grams, say how many it makes and how many you want. Every amount is multiplied by the same factor.",
     note: "works for any recipe, not just the ones here",
     Tool: RecipeScaler,
+  },
+  {
+    id: "pans",
+    title: "Pan converter",
+    text: "Got a 20 cm round recipe and a 33 × 23 cm pan? This compares the base areas and tells you how much to multiply by, so the batter comes out the same depth.",
+    note: "bigger pan, same depth, more batter",
+    Tool: PanConverter,
+  },
+  {
+    id: "units",
+    title: "Unit converter",
+    text: "Grams to cups and back, for the most common baking ingredients, plus oven temperatures. Weighing is more accurate, but not everyone owns a scale.",
+    note: "a cup of flour ≠ a cup of sugar",
+    Tool: UnitConverter,
   },
   {
     id: "altitude",
@@ -34,8 +50,7 @@ export default function ToolsPage() {
         <span className="highlight">Lab tools</span>
       </h1>
       <p className="mt-4 max-w-xl text-lg">
-        The same maths the recipe pages use, for any recipe you bring. (Pan sizes
-        and cups are on every recipe page.)
+        The same maths the recipe pages use, for any recipe you bring.
       </p>
 
       <p className="mt-4 text-sm">

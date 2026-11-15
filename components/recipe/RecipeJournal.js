@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createBake } from "@/app/bakes/actions";
-import { bakeFromRecipe, fromBakeRow, today } from "@/lib/bakes";
+import { averageRating, bakeFromRecipe, fromBakeRow, today } from "@/lib/bakes";
 import { createClient } from "@/lib/supabase/client";
 
 // Ratings offered in the quick form: 1, 1.5, 2 ... 5
@@ -94,11 +94,7 @@ function BakeHistory({ recipe, bakes, onLogged }) {
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState("idle"); // "idle", "saving" or an error
 
-  const rated = bakes.filter((bake) => bake.rating !== null);
-  const average =
-    rated.length > 0
-      ? Math.round((rated.reduce((total, bake) => total + bake.rating, 0) / rated.length) * 10) / 10
-      : null;
+  const average = averageRating(bakes);
 
   async function handleSubmit(event) {
     event.preventDefault();

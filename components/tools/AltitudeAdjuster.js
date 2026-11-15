@@ -49,7 +49,7 @@ export default function AltitudeAdjuster() {
   const band = isValid ? bandFor(meters) : null;
 
   return (
-    <div className="note tape px-4 pb-5 pt-7 sm:px-5">
+    <div className="note tape panel">
       <div className="graph grid gap-4 border-[1.5px] border-foreground p-3.5">
         <div className="flex flex-wrap items-end gap-3">
           <div>

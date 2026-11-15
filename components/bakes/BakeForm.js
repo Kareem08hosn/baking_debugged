@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createBake, deleteBake, updateBake } from "@/app/bakes/actions";
+import ConfirmDelete from "@/components/ConfirmDelete";
 import { BAKE_FIELDS, bakeFromRecipe, readNumber, today } from "@/lib/bakes";
 import { fetchMyRecipe } from "@/lib/myRecipes";
 
@@ -220,13 +221,7 @@ export default function BakeForm({ bake = null, recipes, prefill = null }) {
           </button>
         )}
         {status === "confirm-delete" && (
-          <span className="flex flex-wrap items-center gap-3" role="group" aria-label="Confirm delete">
-            <span className="font-mono text-sm font-bold">Delete it for good?</span>
-            <button type="button" className="btn-quiet" onClick={handleDelete}>Yes, delete</button>
-            <button type="button" className="font-mono text-sm underline underline-offset-4" onClick={() => setStatus("idle")}>
-              Keep it
-            </button>
-          </span>
+          <ConfirmDelete onConfirm={handleDelete} onCancel={() => setStatus("idle")} />
         )}
       </div>
 

@@ -90,7 +90,7 @@ export default function RecipeScaler() {
   const factor = canScale ? Math.round((want / makes) * 100) / 100 : null;
 
   return (
-    <div className="note tape px-4 pb-5 pt-7 sm:px-5">
+    <div className="note tape panel">
       {/* The two numbers that set the scale, and the factor between them */}
       <div className="graph flex flex-wrap items-end gap-x-4 gap-y-3 border-[1.5px] border-foreground p-3.5">
         <label className="label">
